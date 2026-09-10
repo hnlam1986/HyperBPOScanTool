@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="HyperBPOScanTool/HyperBPOScanTool.csproj" />
+  <Project Path="NTwain/NTwain.csproj" />
+</Solution>
