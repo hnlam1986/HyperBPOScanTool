@@ -12,7 +12,7 @@ namespace HyperBPOScanTool
     {
         None = 0,
         Persheet = 1,
-        BlankPage = 3,
+        BlankSheet = 3,
         Barcode = 4,
         NumOfPage = 5
     }
