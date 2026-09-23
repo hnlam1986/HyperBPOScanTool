@@ -63,6 +63,26 @@ namespace HyperBPOScanTool.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap batch {
+            get {
+                object obj = ResourceManager.GetObject("batch", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap blank_page {
+            get {
+                object obj = ResourceManager.GetObject("blank_page", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap border_small {
             get {
                 object obj = ResourceManager.GetObject("border_small", resourceCulture);
@@ -103,6 +123,16 @@ namespace HyperBPOScanTool.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap document {
+            get {
+                object obj = ResourceManager.GetObject("document", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap eraser {
             get {
                 object obj = ResourceManager.GetObject("eraser", resourceCulture);
@@ -126,6 +156,16 @@ namespace HyperBPOScanTool.Properties {
         internal static System.Drawing.Bitmap new_batch {
             get {
                 object obj = ResourceManager.GetObject("new_batch", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap ok_page {
+            get {
+                object obj = ResourceManager.GetObject("ok_page", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

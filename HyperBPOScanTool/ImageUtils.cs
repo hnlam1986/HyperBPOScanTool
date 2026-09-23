@@ -116,5 +116,31 @@ namespace HyperBPOScanTool
 
             return borderedImage;
         }
+
+        public static Bitmap RotateDegrees(Bitmap originalImage, bool clockwise = true, bool IsUpDowm = false)
+        {
+            // Tạo bản sao để tránh làm thay đổi trực tiếp ảnh gốc nếu cần giữ nguyên
+            Bitmap rotatedImage = (Bitmap)originalImage.Clone();
+
+            // Rotate90FlipNone: Xoay 90 độ theo chiều kim đồng hồ
+            // Rotate270FlipNone: Xoay 90 độ ngược chiều kim đồng hồ
+            if (!IsUpDowm)
+            {
+                RotateFlipType rotateType = clockwise
+                    ? RotateFlipType.Rotate90FlipNone
+                    : RotateFlipType.Rotate270FlipNone;
+
+                rotatedImage.RotateFlip(rotateType);
+            }
+            else
+            {
+                RotateFlipType rotateType = RotateFlipType.Rotate180FlipNone;
+                    
+
+                rotatedImage.RotateFlip(rotateType);
+            }
+
+            return rotatedImage;
+        }
     }
 }

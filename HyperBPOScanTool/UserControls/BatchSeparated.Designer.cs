@@ -37,9 +37,9 @@
             chkBlankSheet = new CheckBox();
             rdQR = new RadioButton();
             button1 = new Button();
-            groupBox1 = new GroupBox();
+            gbSeparateMode = new GroupBox();
             groupBox2 = new GroupBox();
-            groupBox1.SuspendLayout();
+            gbSeparateMode.SuspendLayout();
             groupBox2.SuspendLayout();
             SuspendLayout();
             // 
@@ -82,9 +82,9 @@
             chkBlankPage.Location = new Point(16, 26);
             chkBlankPage.Margin = new Padding(4, 3, 4, 3);
             chkBlankPage.Name = "chkBlankPage";
-            chkBlankPage.Size = new Size(112, 19);
+            chkBlankPage.Size = new Size(120, 19);
             chkBlankPage.TabIndex = 10;
-            chkBlankPage.Text = "Hide blank page";
+            chkBlankPage.Text = "Delete blank page";
             chkBlankPage.UseVisualStyleBackColor = true;
             // 
             // rdTotalPages
@@ -138,21 +138,21 @@
             button1.Text = "Download QR code";
             button1.UseVisualStyleBackColor = true;
             // 
-            // groupBox1
+            // gbSeparateMode
             // 
-            groupBox1.Controls.Add(rdSheet);
-            groupBox1.Controls.Add(button1);
-            groupBox1.Controls.Add(txtPages);
-            groupBox1.Controls.Add(rdQR);
-            groupBox1.Controls.Add(rdTotalPages);
-            groupBox1.Controls.Add(txtBlankValue);
-            groupBox1.Controls.Add(rdBlankSheet);
-            groupBox1.Location = new Point(3, 3);
-            groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(257, 163);
-            groupBox1.TabIndex = 16;
-            groupBox1.TabStop = false;
-            groupBox1.Text = "Separate mode";
+            gbSeparateMode.Controls.Add(rdSheet);
+            gbSeparateMode.Controls.Add(button1);
+            gbSeparateMode.Controls.Add(txtPages);
+            gbSeparateMode.Controls.Add(rdQR);
+            gbSeparateMode.Controls.Add(rdTotalPages);
+            gbSeparateMode.Controls.Add(txtBlankValue);
+            gbSeparateMode.Controls.Add(rdBlankSheet);
+            gbSeparateMode.Location = new Point(3, 3);
+            gbSeparateMode.Name = "gbSeparateMode";
+            gbSeparateMode.Size = new Size(257, 163);
+            gbSeparateMode.TabIndex = 16;
+            gbSeparateMode.TabStop = false;
+            gbSeparateMode.Text = "Separate mode";
             // 
             // groupBox2
             // 
@@ -170,11 +170,11 @@
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             Controls.Add(groupBox2);
-            Controls.Add(groupBox1);
+            Controls.Add(gbSeparateMode);
             Name = "BatchSeparated";
             Size = new Size(425, 172);
-            groupBox1.ResumeLayout(false);
-            groupBox1.PerformLayout();
+            gbSeparateMode.ResumeLayout(false);
+            gbSeparateMode.PerformLayout();
             groupBox2.ResumeLayout(false);
             groupBox2.PerformLayout();
             ResumeLayout(false);
@@ -191,7 +191,7 @@
         private CheckBox chkBlankSheet;
         private RadioButton rdQR;
         private Button button1;
-        private GroupBox groupBox1;
+        private GroupBox gbSeparateMode;
         private GroupBox groupBox2;
     }
 }

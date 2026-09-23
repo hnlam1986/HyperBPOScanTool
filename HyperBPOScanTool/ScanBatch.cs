@@ -16,17 +16,19 @@ namespace HyperBPOScanTool
         Barcode = 4,
         NumOfPage = 5
     }
-    public class ScanPack
+    public class ScanBatch
     {
-        public ScanPack()
+        public ScanBatch()
         {
             ScanFiles = new List<ScanFile>();
         }
         public List<ScanFile> ScanFiles { get; set; }
-
-        public ScanPack Clone()
+        public string BatchName { get; set; }
+        public string ExportPath { get; set; }
+        public string IndexFormat { get; set; }
+        public ScanBatch Clone()
         {
-            ScanPack newPack = new ScanPack();
+            ScanBatch newPack = new ScanBatch();
             foreach (var file in ScanFiles)
             {
                 ScanFile newFile = new ScanFile();
@@ -60,7 +62,10 @@ namespace HyperBPOScanTool
         public List<ScanPage> Pages { get; set; }
         public bool IsBlankSheet { get {
                 //bool isBlank = false;
-                return Pages[0].IsBlank && Pages[1].IsBlank;
+                if (Pages.Count <= 0) return true;
+                else if (Pages.Count == 1) return Pages[0].IsBlank;
+                else if (Pages.Count >= 2) return Pages[0].IsBlank && Pages[1].IsBlank;
+                return false;
             } }
     }
 
@@ -74,8 +79,23 @@ namespace HyperBPOScanTool
         public Image PageImage { get; set; }
         public bool IsBlank { get; set; }
         public int PageIndex { get; set; }
-        public double StdDevVal { get; set; }
+        public decimal StdDevVal { get; set; }
         public string ImageId { get; set; }
+    }
+
+    public class ScanSheet
+    {
+        public ScanSheet()
+        {
+                
+        }
+        public string SheetName { get; set; }
+        public string SheetId { get; set; }
+        public int SheetIndex { get; set; }
+        public bool IsBlankSheet { get; set; }
+        public ScanPage Top { get; set; }
+        public ScanPage Bottom { get; set; }
+
     }
 
 }

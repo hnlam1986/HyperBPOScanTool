@@ -45,11 +45,13 @@ namespace HyperBPOScanTool.UserControls
         private void btnApply_Click(object sender, EventArgs e)
         {
             CallApply?.Invoke(GetWhiteBorderData());
+            this.ParentForm.Close();
         }
 
         private void btnApplyAll_Click(object sender, EventArgs e)
         {
             CallApplyAll?.Invoke(GetWhiteBorderData());
+            this.ParentForm.Close();
         }
 
         

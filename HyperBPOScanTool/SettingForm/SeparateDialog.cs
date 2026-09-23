@@ -36,6 +36,10 @@ namespace HyperBPOScanTool.SettingForm
         private void SeparateDialog_Load(object sender, EventArgs e)
         {
             ucSeparateMode.SetSeparateData(SeparatedDataObject);
+            ucSeparateMode.SetDisableSeparateMode(DisableSeparateMode);
         }
+        [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public bool DisableSeparateMode { get; set; }
     }
 }

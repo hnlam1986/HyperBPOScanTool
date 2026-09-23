@@ -84,5 +84,10 @@ namespace HyperBPOScanTool.UserControls
                     }
             }
         }
+
+        public void SetDisableSeparateMode(bool isDisable)
+        {
+            gbSeparateMode.Enabled = !isDisable;
+        }
     }
 }

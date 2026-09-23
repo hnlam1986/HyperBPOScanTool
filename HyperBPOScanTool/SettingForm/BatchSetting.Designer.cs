@@ -28,20 +28,25 @@
         /// </summary>
         private void InitializeComponent()
         {
-            label1 = new Label();
+            lblExportPath = new Label();
             btnSelectpath = new Button();
             folderBrowserDialog1 = new FolderBrowserDialog();
             tabControl1 = new TabControl();
             tabPage1 = new TabPage();
+            label3 = new Label();
+            txtIndexFormat = new TextBox();
+            label1 = new Label();
+            txtBatchName = new TextBox();
+            label2 = new Label();
             tabPage2 = new TabPage();
-            tabPage3 = new TabPage();
-            chkBlankSheet = new CheckBox();
-            txtPages = new TextBox();
-            rdTotalPages = new RadioButton();
-            chkBlankPage = new CheckBox();
-            txtBlankValue = new TextBox();
-            rdBlankSheet = new RadioButton();
             rdSheet = new RadioButton();
+            rdBlankSheet = new RadioButton();
+            txtBlankValue = new TextBox();
+            chkBlankPage = new CheckBox();
+            rdTotalPages = new RadioButton();
+            txtPages = new TextBox();
+            chkBlankSheet = new CheckBox();
+            tabPage3 = new TabPage();
             btnRollbackAll = new Button();
             btnRollback = new Button();
             btnApplyAll = new Button();
@@ -51,53 +56,100 @@
             txtRightBorder = new TextBox();
             txtLeftBorder = new TextBox();
             txtTopBorder = new TextBox();
+            btnOK = new Button();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
             tabPage2.SuspendLayout();
             tabPage3.SuspendLayout();
             SuspendLayout();
             // 
-            // label1
+            // lblExportPath
             // 
-            label1.AutoSize = true;
-            label1.Location = new Point(111, 19);
-            label1.Name = "label1";
-            label1.Size = new Size(16, 15);
-            label1.TabIndex = 0;
-            label1.Text = "...";
+            lblExportPath.AutoSize = true;
+            lblExportPath.Location = new Point(106, 102);
+            lblExportPath.Name = "lblExportPath";
+            lblExportPath.Size = new Size(16, 15);
+            lblExportPath.TabIndex = 0;
+            lblExportPath.Text = "...";
             // 
             // btnSelectpath
             // 
-            btnSelectpath.Location = new Point(15, 15);
+            btnSelectpath.Location = new Point(10, 98);
             btnSelectpath.Name = "btnSelectpath";
             btnSelectpath.Size = new Size(90, 23);
             btnSelectpath.TabIndex = 1;
             btnSelectpath.Text = "Export Folder";
             btnSelectpath.UseVisualStyleBackColor = true;
+            btnSelectpath.Click += btnSelectpath_Click;
             // 
             // tabControl1
             // 
             tabControl1.Controls.Add(tabPage1);
             tabControl1.Controls.Add(tabPage2);
             tabControl1.Controls.Add(tabPage3);
-            tabControl1.Dock = DockStyle.Fill;
             tabControl1.Location = new Point(0, 0);
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
-            tabControl1.Size = new Size(800, 730);
+            tabControl1.Size = new Size(520, 215);
             tabControl1.TabIndex = 2;
             // 
             // tabPage1
             // 
-            tabPage1.Controls.Add(btnSelectpath);
+            tabPage1.Controls.Add(label3);
+            tabPage1.Controls.Add(txtIndexFormat);
             tabPage1.Controls.Add(label1);
+            tabPage1.Controls.Add(txtBatchName);
+            tabPage1.Controls.Add(label2);
+            tabPage1.Controls.Add(btnSelectpath);
+            tabPage1.Controls.Add(lblExportPath);
             tabPage1.Location = new Point(4, 24);
             tabPage1.Name = "tabPage1";
             tabPage1.Padding = new Padding(3);
-            tabPage1.Size = new Size(792, 422);
+            tabPage1.Size = new Size(512, 187);
             tabPage1.TabIndex = 0;
             tabPage1.Text = "General";
             tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new Point(97, 71);
+            label3.Name = "label3";
+            label3.Size = new Size(258, 15);
+            label3.TabIndex = 6;
+            label3.Text = "Input only 0 (ZERO). For example: 000, 00000, ....";
+            // 
+            // txtIndexFormat
+            // 
+            txtIndexFormat.Location = new Point(97, 45);
+            txtIndexFormat.Name = "txtIndexFormat";
+            txtIndexFormat.Size = new Size(384, 23);
+            txtIndexFormat.TabIndex = 5;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(10, 48);
+            label1.Name = "label1";
+            label1.Size = new Size(74, 15);
+            label1.TabIndex = 4;
+            label1.Text = "Index format";
+            // 
+            // txtBatchName
+            // 
+            txtBatchName.Location = new Point(97, 16);
+            txtBatchName.Name = "txtBatchName";
+            txtBatchName.Size = new Size(384, 23);
+            txtBatchName.TabIndex = 3;
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new Point(10, 19);
+            label2.Name = "label2";
+            label2.Size = new Size(72, 15);
+            label2.TabIndex = 2;
+            label2.Text = "Batch Name";
             // 
             // tabPage2
             // 
@@ -111,10 +163,85 @@
             tabPage2.Location = new Point(4, 24);
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(792, 702);
+            tabPage2.Size = new Size(512, 187);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "Separate mode";
             tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // rdSheet
+            // 
+            rdSheet.AutoSize = true;
+            rdSheet.Checked = true;
+            rdSheet.Location = new Point(9, 6);
+            rdSheet.Margin = new Padding(4, 3, 4, 3);
+            rdSheet.Name = "rdSheet";
+            rdSheet.Size = new Size(84, 19);
+            rdSheet.TabIndex = 0;
+            rdSheet.TabStop = true;
+            rdSheet.Text = "Every sheet";
+            rdSheet.UseVisualStyleBackColor = true;
+            // 
+            // rdBlankSheet
+            // 
+            rdBlankSheet.AutoSize = true;
+            rdBlankSheet.Location = new Point(9, 76);
+            rdBlankSheet.Margin = new Padding(4, 3, 4, 3);
+            rdBlankSheet.Name = "rdBlankSheet";
+            rdBlankSheet.Size = new Size(85, 19);
+            rdBlankSheet.TabIndex = 1;
+            rdBlankSheet.Text = "Blank sheet";
+            rdBlankSheet.UseVisualStyleBackColor = true;
+            // 
+            // txtBlankValue
+            // 
+            txtBlankValue.Location = new Point(109, 73);
+            txtBlankValue.Margin = new Padding(4, 3, 4, 3);
+            txtBlankValue.Name = "txtBlankValue";
+            txtBlankValue.Size = new Size(111, 23);
+            txtBlankValue.TabIndex = 2;
+            txtBlankValue.Text = "0.002";
+            // 
+            // chkBlankPage
+            // 
+            chkBlankPage.AutoSize = true;
+            chkBlankPage.Location = new Point(9, 109);
+            chkBlankPage.Margin = new Padding(4, 3, 4, 3);
+            chkBlankPage.Name = "chkBlankPage";
+            chkBlankPage.Size = new Size(126, 19);
+            chkBlankPage.TabIndex = 3;
+            chkBlankPage.Text = "Discard blank page";
+            chkBlankPage.UseVisualStyleBackColor = true;
+            // 
+            // rdTotalPages
+            // 
+            rdTotalPages.AutoSize = true;
+            rdTotalPages.Location = new Point(9, 39);
+            rdTotalPages.Margin = new Padding(4, 3, 4, 3);
+            rdTotalPages.Name = "rdTotalPages";
+            rdTotalPages.Size = new Size(85, 19);
+            rdTotalPages.TabIndex = 4;
+            rdTotalPages.Text = "Total pages";
+            rdTotalPages.UseVisualStyleBackColor = true;
+            // 
+            // txtPages
+            // 
+            txtPages.Location = new Point(109, 39);
+            txtPages.Margin = new Padding(4, 3, 4, 3);
+            txtPages.Name = "txtPages";
+            txtPages.Size = new Size(111, 23);
+            txtPages.TabIndex = 5;
+            txtPages.Text = "4";
+            // 
+            // chkBlankSheet
+            // 
+            chkBlankSheet.AutoSize = true;
+            chkBlankSheet.Location = new Point(9, 135);
+            chkBlankSheet.Margin = new Padding(4, 3, 4, 3);
+            chkBlankSheet.Name = "chkBlankSheet";
+            chkBlankSheet.Size = new Size(114, 19);
+            chkBlankSheet.TabIndex = 6;
+            chkBlankSheet.Text = "Hide blank sheet";
+            chkBlankSheet.UseVisualStyleBackColor = true;
             // 
             // tabPage3
             // 
@@ -129,85 +256,10 @@
             tabPage3.Controls.Add(txtTopBorder);
             tabPage3.Location = new Point(4, 24);
             tabPage3.Name = "tabPage3";
-            tabPage3.Size = new Size(792, 702);
+            tabPage3.Size = new Size(512, 187);
             tabPage3.TabIndex = 2;
             tabPage3.Text = "Remove black border";
             tabPage3.UseVisualStyleBackColor = true;
-            // 
-            // chkBlankSheet
-            // 
-            chkBlankSheet.AutoSize = true;
-            chkBlankSheet.Location = new Point(9, 135);
-            chkBlankSheet.Margin = new Padding(4, 3, 4, 3);
-            chkBlankSheet.Name = "chkBlankSheet";
-            chkBlankSheet.Size = new Size(114, 19);
-            chkBlankSheet.TabIndex = 6;
-            chkBlankSheet.Text = "Hide blank sheet";
-            chkBlankSheet.UseVisualStyleBackColor = true;
-            // 
-            // txtPages
-            // 
-            txtPages.Location = new Point(109, 39);
-            txtPages.Margin = new Padding(4, 3, 4, 3);
-            txtPages.Name = "txtPages";
-            txtPages.Size = new Size(111, 23);
-            txtPages.TabIndex = 5;
-            txtPages.Text = "4";
-            // 
-            // rdTotalPages
-            // 
-            rdTotalPages.AutoSize = true;
-            rdTotalPages.Location = new Point(9, 39);
-            rdTotalPages.Margin = new Padding(4, 3, 4, 3);
-            rdTotalPages.Name = "rdTotalPages";
-            rdTotalPages.Size = new Size(85, 19);
-            rdTotalPages.TabIndex = 4;
-            rdTotalPages.Text = "Total pages";
-            rdTotalPages.UseVisualStyleBackColor = true;
-            // 
-            // chkBlankPage
-            // 
-            chkBlankPage.AutoSize = true;
-            chkBlankPage.Location = new Point(9, 109);
-            chkBlankPage.Margin = new Padding(4, 3, 4, 3);
-            chkBlankPage.Name = "chkBlankPage";
-            chkBlankPage.Size = new Size(112, 19);
-            chkBlankPage.TabIndex = 3;
-            chkBlankPage.Text = "Hide blank page";
-            chkBlankPage.UseVisualStyleBackColor = true;
-            // 
-            // txtBlankValue
-            // 
-            txtBlankValue.Location = new Point(109, 73);
-            txtBlankValue.Margin = new Padding(4, 3, 4, 3);
-            txtBlankValue.Name = "txtBlankValue";
-            txtBlankValue.Size = new Size(111, 23);
-            txtBlankValue.TabIndex = 2;
-            txtBlankValue.Text = "15.0";
-            // 
-            // rdBlankSheet
-            // 
-            rdBlankSheet.AutoSize = true;
-            rdBlankSheet.Location = new Point(9, 76);
-            rdBlankSheet.Margin = new Padding(4, 3, 4, 3);
-            rdBlankSheet.Name = "rdBlankSheet";
-            rdBlankSheet.Size = new Size(85, 19);
-            rdBlankSheet.TabIndex = 1;
-            rdBlankSheet.Text = "Blank sheet";
-            rdBlankSheet.UseVisualStyleBackColor = true;
-            // 
-            // rdSheet
-            // 
-            rdSheet.AutoSize = true;
-            rdSheet.Checked = true;
-            rdSheet.Location = new Point(9, 6);
-            rdSheet.Margin = new Padding(4, 3, 4, 3);
-            rdSheet.Name = "rdSheet";
-            rdSheet.Size = new Size(84, 19);
-            rdSheet.TabIndex = 0;
-            rdSheet.TabStop = true;
-            rdSheet.Text = "Every sheet";
-            rdSheet.UseVisualStyleBackColor = true;
             // 
             // btnRollbackAll
             // 
@@ -295,14 +347,26 @@
             txtTopBorder.TabIndex = 16;
             txtTopBorder.Text = "0";
             // 
+            // btnOK
+            // 
+            btnOK.Location = new Point(417, 221);
+            btnOK.Name = "btnOK";
+            btnOK.Size = new Size(92, 35);
+            btnOK.TabIndex = 3;
+            btnOK.Text = "OK";
+            btnOK.UseVisualStyleBackColor = true;
+            btnOK.Click += btnOK_Click;
+            // 
             // BatchSetting
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 730);
+            ClientSize = new Size(521, 268);
+            Controls.Add(btnOK);
             Controls.Add(tabControl1);
             Name = "BatchSetting";
             Text = "Batch Setting";
+            Load += BatchSetting_Load;
             tabControl1.ResumeLayout(false);
             tabPage1.ResumeLayout(false);
             tabPage1.PerformLayout();
@@ -315,7 +379,7 @@
 
         #endregion
 
-        private Label label1;
+        private Label lblExportPath;
         private Button btnSelectpath;
         private FolderBrowserDialog folderBrowserDialog1;
         private TabControl tabControl1;
@@ -338,5 +402,11 @@
         private TextBox txtRightBorder;
         private TextBox txtLeftBorder;
         private TextBox txtTopBorder;
+        private TextBox txtBatchName;
+        private Label label2;
+        private Button btnOK;
+        private Label label3;
+        private TextBox txtIndexFormat;
+        private Label label1;
     }
 }

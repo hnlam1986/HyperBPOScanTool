@@ -1,4 +1,5 @@
 ﻿using HyperBPOScanTool.SettingForm;
+using HyperBPOScanTool.UserControls;
 using Newtonsoft.Json;
 using NTwain;
 using NTwain.Data;
@@ -21,6 +22,7 @@ using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using System.Windows.Media.Media3D;
 using static OpenCvSharp.ML.DTrees;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using Image = System.Drawing.Image;
 using RadioButton = System.Windows.Forms.RadioButton;
 
@@ -39,6 +41,7 @@ namespace HyperBPOScanTool
         public ScanForm()
         {
             InitializeComponent();
+            this.KeyPreview = true;
             if (NTwain.PlatformInfo.Current.IsApp64Bit)
             {
                 Text = Text + " (64bit)";
@@ -61,7 +64,7 @@ namespace HyperBPOScanTool
             {
                 SeparateMode = SeparateType.Persheet,
                 TotalPage = 2,
-                BlankValue = 16,
+                BlankValue = (decimal)0.002,
                 HideBlankPage = false,
                 HideBlankSheet = false
             };
@@ -84,8 +87,8 @@ namespace HyperBPOScanTool
             }
             base.OnFormClosing(e);
         }
-        ScanPack originalPack = null;
-        ScanPack scanPack = new ScanPack();
+        ScanBatch originalPack = null;
+        ScanBatch scanPack = new ScanBatch();
         ScanFile _currentFile = null;
         ScanFile _currentSheet = null;
         ScanFile _sheet = null;
@@ -144,14 +147,21 @@ namespace HyperBPOScanTool
             TreeNode node = new TreeNode();
             node.Tag = file;
             node.Text = file.FileName;
+            node.ImageIndex = 1;
+            node.SelectedImageIndex = 1;
             foreach (ScanPage page in file.Pages)
             {
                 TreeNode pageNode = new TreeNode();
                 pageNode.Tag = page;
-                pageNode.Text = "Page_" + page.PageIndex + "(" + page.StdDevVal + ")";
+                pageNode.Text = "Page_" + page.PageIndex;
+                pageNode.ImageIndex = 2;
+                pageNode.SelectedImageIndex = 2;
                 if (page.IsBlank)
                 {
-                    pageNode.BackColor = Color.Red;
+                    //pageNode.Text = "Page_" + page.PageIndex + "(" + page.StdDevVal + ")";
+                    //pageNode.BackColor = Color.Red;
+                    pageNode.ImageIndex = 3;
+                    pageNode.SelectedImageIndex = 3;
                 }
                 node.Nodes.Add(pageNode);
             }
@@ -170,110 +180,202 @@ namespace HyperBPOScanTool
                 {
                     TreeNode pageNode = new TreeNode();
                     pageNode.Tag = page;
-                    pageNode.Text = "Page_" + page.PageIndex + "(" + page.StdDevVal + ")";
+                    pageNode.Text = "Page_" + page.PageIndex;
+                    pageNode.ImageIndex = 2;
+                    pageNode.SelectedImageIndex = 2;
                     if (page.IsBlank)
                     {
-                        pageNode.BackColor = Color.Red;
+                        //pageNode.Text = "Page_" + page.PageIndex + "(" + page.StdDevVal + ")";
+                        pageNode.ImageIndex = 3;
+                        pageNode.SelectedImageIndex = 3;
                     }
                     currentFileNode.Nodes.Add(pageNode);
                 }
             }));
         }
-        private void SetupTwain()
+        int documentNumber = 1;
+        private void OnStateChanged(object s, EventArgs e)
         {
-            var appId = TWIdentity.CreateFromAssembly(DataGroups.Image, Assembly.GetEntryAssembly());
-            _twain = new TwainSession(appId);
-            _twain.StateChanged += (s, e) =>
+            PlatformInfo.Current.Log.Info("State changed to " + _twain.State + " on thread " + Thread.CurrentThread.ManagedThreadId);
+            if (_twain.State == 4)
             {
-                PlatformInfo.Current.Log.Info("State changed to " + _twain.State + " on thread " + Thread.CurrentThread.ManagedThreadId);
-            };
-            _twain.TransferError += (s, e) =>
-            {
-                PlatformInfo.Current.Log.Info("Got xfer error on thread " + Thread.CurrentThread.ManagedThreadId);
-            };
-            _twain.DataTransferred += (s, e) =>
-            {
+                var source = _twain.CurrentSource;
 
-                PlatformInfo.Current.Log.Info("hinh gui xong");
-                PlatformInfo.Current.Log.Info("Transferred data event on thread " + Thread.CurrentThread.ManagedThreadId);
-
-                // example on getting ext image info
-                var infos = e.GetExtImageInfo(ExtendedImageInfo.Camera).Where(it => it.ReturnCode == ReturnCode.Success);
-                foreach (var it in infos)
+                // Kiểm tra xem máy quét có hỗ trợ ICAP_AUTODISCARDBLANKPAGES không
+                if (source.Capabilities.ICapAutoDiscardBlankPages.IsSupported)
                 {
-                    var values = it.ReadValues();
-                    PlatformInfo.Current.Log.Info(string.Format("{0} = {1}", it.InfoID, values.FirstOrDefault()));
-                    break;
-                }
-
-                // handle image data
-                Image img = null;
-                if (e.NativeData != IntPtr.Zero)
-                {
-                    var stream = e.GetNativeImageStream();
-                    if (stream != null)
+                    // Đặt chế độ tự động bỏ trang trắng (TWBP_AUTO = -2)
+                    BlankPage autoDiscardBlankPages = BlankPage.Disable;
+                    if (_separateObject.HideBlankPage)
                     {
-                        img = Image.FromStream(stream);
+                        autoDiscardBlankPages = BlankPage.Auto;
+                    }
+                    var status = source.Capabilities.ICapAutoDiscardBlankPages.SetValue(autoDiscardBlankPages);
+
+                    if (status == ReturnCode.Success)
+                    {
+                        Console.WriteLine("Đã bật tính năng tự động loại bỏ trang trắng (TWBP_AUTO).");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Máy quét hỗ trợ nhưng không thể đặt giá trị TWBP_AUTO.");
                     }
                 }
-                else if (!string.IsNullOrEmpty(e.FileDataPath))
+                else
                 {
-                    img = new Bitmap(e.FileDataPath);
+                    Console.WriteLine("Máy quét không hỗ trợ ICAP_AUTODISCARDBLANKPAGES.");
                 }
-                if (img != null)
+            }
+        }
+        private void OnTransferError(object s, TransferErrorEventArgs e)
+        {
+            PlatformInfo.Current.Log.Info("Got xfer error on thread " + Thread.CurrentThread.ManagedThreadId);
+        }
+        private void OnDataTransferred(object s, DataTransferredEventArgs e)
+        {
+            PlatformInfo.Current.Log.Info("hinh gui xong");
+            PlatformInfo.Current.Log.Info("Transferred data event on thread " + Thread.CurrentThread.ManagedThreadId);
+
+            // example on getting ext image info
+            var infos = e.GetExtImageInfo(ExtendedImageInfo.Camera).Where(it => it.ReturnCode == ReturnCode.Success);
+            var docNum = e.GetExtImageInfo(ExtendedImageInfo.DocumentNumber).Where(it => it.ReturnCode == ReturnCode.Success);
+            int docNumValue = int.Parse((docNum.FirstOrDefault()).ReadValues().FirstOrDefault().ToString());
+            //var blackNum = e.GetExtImageInfo(ExtendedImageInfo.DeshadeBlackCountNew).Where(it => it.ReturnCode == ReturnCode.Success);
+            //int blackNumValue = int.Parse((blackNum.FirstOrDefault()).ReadValues().FirstOrDefault().ToString());
+            //var whiteNum = e.GetExtImageInfo(ExtendedImageInfo.DeshadeWhiteCountNew).Where(it => it.ReturnCode == ReturnCode.Success);
+            //int whiteNumValue = int.Parse((whiteNum.FirstOrDefault()).ReadValues().FirstOrDefault().ToString());
+
+
+
+            foreach (var it in infos)
+            {
+                var values = it.ReadValues();
+                PlatformInfo.Current.Log.Info(string.Format("{0} = {1}", it.InfoID, values.FirstOrDefault()));
+                break;
+            }
+
+            // handle image data
+            Image img = null;
+            if (e.NativeData != IntPtr.Zero)
+            {
+                var stream = e.GetNativeImageStream();
+                if (stream != null)
                 {
-                    //img = ImageUtils.AddOuterWhiteBorder((Bitmap)img, 5);
-                    if (originalPack == null)
-                    {
-                        originalPack = new ScanPack();
-                    }
-                    if (_sheet == null)
+                    img = Image.FromStream(stream);
+                }
+            }
+            else if (!string.IsNullOrEmpty(e.FileDataPath))
+            {
+                img = new Bitmap(e.FileDataPath);
+            }
+            if (img != null)
+            {
+                //img = ImageUtils.AddOuterWhiteBorder((Bitmap)img, 5);
+                SeparateType sepType = _separateObject.SeparateMode;
+                if (originalPack == null)
+                {
+                    originalPack = new ScanBatch();
+                }
+                if (documentNumber + 1 == docNumValue && _sheet != null)
+                {
+                    originalPack.ScanFiles.Add(_sheet);
+                    //this.BeginInvoke(new Action(() =>
+                    //{
+
+
+                    AddNewScanPage(_sheet, sepType);
+                    _sheet = null;
+                }
+                else if (documentNumber + 1 < docNumValue && _sheet != null)
+                {
+                    originalPack.ScanFiles.Add(_sheet);
+                    AddNewScanPage(_sheet, sepType);
+                    _sheet = null;
+                    if (sepType == SeparateType.BlankSheet)
                     {
                         _sheet = new ScanFile();
                         _sheet.Pages = new List<ScanPage>();
-                    }
-                    ScanPage srcPage = new ScanPage();
-                    srcPage.PageIndex = _sheet.Pages.Count + 1;
-                    srcPage.PageImage = img;
-                    srcPage.ImageId = DateTime.Now.Ticks.ToString();
-                    double stdDevVal;
-                    bool isBlank = IsBitmapBlank(new Bitmap(img), (double)_separateObject.BlankValue, out stdDevVal);
-                    srcPage.StdDevVal = stdDevVal;
-                    srcPage.IsBlank = isBlank;
-                    _sheet.Pages.Add(srcPage);
-                    _sheet.FileName = "Sheet_" + (originalPack.ScanFiles.Count + 1);
-                    _sheet.FileId = DateTime.Now.Ticks.ToString();
-                    if (_sheet.Pages.Count >= 2)
-                    {
                         originalPack.ScanFiles.Add(_sheet);
-                        //this.BeginInvoke(new Action(() =>
-                        //{
-                        SeparateType sepType = _separateObject.SeparateMode;
-
                         AddNewScanPage(_sheet, sepType);
                         _sheet = null;
-                        //}));
                     }
-
                 }
-            };
-            _twain.SourceDisabled += (s, e) =>
-            {
-                PlatformInfo.Current.Log.Info("Source disabled event on thread " + Thread.CurrentThread.ManagedThreadId);
-                this.BeginInvoke(new Action(() =>
+                else if (documentNumber + 1 < docNumValue && _sheet == null)
                 {
-                    btnStopScan.Enabled = false;
-                    btnStartCapture.Enabled = true;
-                    treeView1.Enabled = true;
-                    LoadSourceCaps();
-                }));
-            };
-            _twain.TransferReady += (s, e) =>
+                    if (sepType == SeparateType.BlankSheet)
+                    {
+                        _sheet = new ScanFile();
+                        _sheet.Pages = new List<ScanPage>();
+                        originalPack.ScanFiles.Add(_sheet);
+                        AddNewScanPage(_sheet, sepType);
+                        _sheet = null;
+                    }
+                }
+                if (_sheet == null)
+                {
+                    documentNumber = docNumValue;
+                    _sheet = new ScanFile();
+                    _sheet.Pages = new List<ScanPage>();
+                }
+                ScanPage srcPage = new ScanPage();
+                srcPage.PageIndex = _sheet.Pages.Count + 1;
+                srcPage.PageImage = img;
+                srcPage.ImageId = DateTime.Now.Ticks.ToString();
+                decimal stdDevVal;
+                bool isBlank = BlankPageDetector.IsBlankPage(new Bitmap(img), out stdDevVal, 0.05, 200, (double)_separateObject.BlankValue);
+                srcPage.StdDevVal = stdDevVal;
+                srcPage.IsBlank = isBlank;
+                _sheet.Pages.Add(srcPage);
+                _sheet.FileName = "Sheet_" + (originalPack.ScanFiles.Count + 1);
+                _sheet.FileId = DateTime.Now.Ticks.ToString();
+                if (_sheet.Pages.Count >= 2)
+                {
+                    originalPack.ScanFiles.Add(_sheet);
+                    //this.BeginInvoke(new Action(() =>
+                    //{
+
+                    AddNewScanPage(_sheet, sepType);
+                    _sheet = null;
+                    //}));
+                }
+
+            }
+        }
+        private void OnSourceDisabled(object s, EventArgs e)
+        {
+            PlatformInfo.Current.Log.Info("Source disabled event on thread " + Thread.CurrentThread.ManagedThreadId);
+            if (_sheet != null)
             {
-                PlatformInfo.Current.Log.Info("Transferr ready event on thread " + Thread.CurrentThread.ManagedThreadId);
-                e.CancelAll = _stopScan;
-                //SaveMockData();
-            };
+                originalPack.ScanFiles.Add(_sheet);
+
+                SeparateType sepType = _separateObject.SeparateMode;
+
+                AddNewScanPage(_sheet, sepType);
+                _sheet = null;
+            }
+            this.BeginInvoke(new Action(() =>
+            {
+                btnStopScan.Enabled = false;
+                btnStartCapture.Enabled = true;
+                treeView1.Enabled = true;
+                LoadSourceCaps();
+            }));
+        }
+        private void OnTransferReady(object s, TransferReadyEventArgs e)
+        {
+            PlatformInfo.Current.Log.Info("Transferr ready event on thread " + Thread.CurrentThread.ManagedThreadId);
+            e.CancelAll = _stopScan;
+        }
+        private void SetupTwain()
+        {
+
+            var appId = TWIdentity.CreateFromAssembly(DataGroups.Image, Assembly.GetEntryAssembly());
+            _twain = new TwainSession(appId);
+            _twain.StateChanged += OnStateChanged;
+            _twain.TransferError += OnTransferError;
+            _twain.DataTransferred += OnDataTransferred;
+            _twain.SourceDisabled += OnSourceDisabled;
+            _twain.TransferReady += OnTransferReady;
 
             // either set sync context and don't worry about threads during events,
             // or don't and use control.invoke during the events yourself
@@ -294,11 +396,11 @@ namespace HyperBPOScanTool
         }
         private void CleanupTwain()
         {
-            if (_twain.State == 4)
+            if (_twain.State >= 4)
             {
                 _twain.CurrentSource.Close();
             }
-            if (_twain.State == 3)
+            if (_twain.State == 2)
             {
                 _twain.Close();
             }
@@ -309,6 +411,8 @@ namespace HyperBPOScanTool
                 _twain.ForceStepDown(2);
             }
         }
+
+
 
         #endregion
 
@@ -595,6 +699,14 @@ namespace HyperBPOScanTool
 
         private void TestForm_Load(object sender, EventArgs e)
         {
+            ImageList listImage = new ImageList();
+            listImage.Images.Add(Properties.Resources.batch); //0
+            listImage.Images.Add(Properties.Resources.document);  //1
+            listImage.Images.Add(Properties.Resources.ok_page);  //2
+            listImage.Images.Add(Properties.Resources.blank_page);  //3
+            treeView1.ImageList = listImage;
+            treeView1.Nodes[0].ImageIndex = 0;
+            treeView1.Nodes[0].SelectedImageIndex = 0;
             ReloadSourceList();
         }
         private List<ScanPage> GetAllPagesOfFile(string fileId)
@@ -607,7 +719,7 @@ namespace HyperBPOScanTool
         }
         PictureBox previewPic = null;
         TreeNode lastselectedNode = null;
-        private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
+        private void DisplayNodeDetail()
         {
             if (lastselectedNode != null)
             {
@@ -618,42 +730,101 @@ namespace HyperBPOScanTool
             selected.BackColor = SystemColors.Highlight;
             selected.ForeColor = Color.White;
             lastselectedNode = selected;
-            if (selected.Tag != null && selected.Tag is ScanFile file)
+            tsClearArea.Enabled = false;
+            tsStraigth.Enabled = false;
+            tsRescan.Enabled = false;
+            if (selected.Tag == "root")
             {
+                previewPic = null;
+                TreeNode root = treeView1.Nodes[0];
+                if (root.Nodes.Count > 0)
+                {
+                    flowLayoutPanel1.Controls.Clear();
+                    foreach (TreeNode fileNode in root.Nodes)
+                    {
+                        TreeNodeCollection pages = fileNode.Nodes;
+
+                        foreach (TreeNode page in pages)
+                        {
+                            ucThumbnail pbThumbnail = new ucThumbnail();
+                            pbThumbnail.Size = new System.Drawing.Size(300, 300);
+                            //pbThumbnail.SizeMode = PictureBoxSizeMode.Zoom;
+                            //pbThumbnail.BorderStyle = BorderStyle.FixedSingle;
+                            
+                            pbThumbnail.Tag = page;
+                            pbThumbnail.PictureBoxDoubleClicked += pbThumbnail_DoubleClick;
+                            if (page.Tag is ScanPage scanPage)
+                            {
+                                pbThumbnail.ScanPage = (ScanPage)page.Tag;
+                                if (scanPage.IsBlank)
+                                {
+                                    //pbThumbnail.BackColor = Color.FromArgb(255, 240, 240);
+                                }
+                                pbThumbnail.Image = GetPageImage(scanPage.ImageId);
+                            }
+                            flowLayoutPanel1.Controls.Add(pbThumbnail);
+                        }
+                    }
+                    // Handle root node selection
+                }
+            }
+            else if (selected.Tag != null && selected.Tag is ScanFile file)
+            {
+                previewPic = null;
                 TreeNodeCollection pages = selected.Nodes;
                 flowLayoutPanel1.Controls.Clear();
 
                 foreach (TreeNode page in pages)
                 {
-                    PictureBox pictureBox2 = new PictureBox();
-                    pictureBox2.Size = new System.Drawing.Size(300, 300);
-                    pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
-                    pictureBox2.BorderStyle = BorderStyle.FixedSingle;
-
+                    ucThumbnail pbThumbnail = new ucThumbnail();
+                    pbThumbnail.Size = new System.Drawing.Size(300, 300);
+                    //pbThumbnail.SizeMode = PictureBoxSizeMode.Zoom;
+                    //pbThumbnail.BorderStyle = BorderStyle.FixedSingle;
+                    pbThumbnail.Tag = page;
+                    pbThumbnail.PictureBoxDoubleClicked += pbThumbnail_DoubleClick;
                     if (page.Tag is ScanPage scanPage)
                     {
-                        pictureBox2.Image = GetPageImage(scanPage.ImageId);
+                        pbThumbnail.ScanPage = (ScanPage)page.Tag;
+                        if (scanPage.IsBlank)
+                        {
+                            //pbThumbnail.BackColor = Color.FromArgb(255, 240, 240);
+                        }
+                        pbThumbnail.Image = GetPageImage(scanPage.ImageId);
                     }
-                    flowLayoutPanel1.Controls.Add(pictureBox2);
+                    flowLayoutPanel1.Controls.Add(pbThumbnail);
                 }
             }
             else
             {
+                tsClearArea.Enabled = true;
+                tsStraigth.Enabled = true;
+                tsRescan.Enabled = true;
                 flowLayoutPanel1.Controls.Clear();
-                PictureBox pictureBox2 = new PictureBox();
+                PictureBox pbPreview = new PictureBox();
 
-                pictureBox2.Size = new System.Drawing.Size(flowLayoutPanel1.Size.Width - 20, flowLayoutPanel1.Size.Height - 50);
-                pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
-                //pictureBox2.BorderStyle = BorderStyle.FixedSingle;
-                pictureBox2.MouseDown += PreviewPic_MouseDown;
-                pictureBox2.MouseMove += PreviewPic_MouseMove;
-                pictureBox2.MouseUp += PreviewPic_MouseUp;
-                pictureBox2.Paint += PreviewPic_Paint;
+                pbPreview.Size = new System.Drawing.Size(flowLayoutPanel1.Size.Width, flowLayoutPanel1.Size.Height - 10);
+                pbPreview.SizeMode = PictureBoxSizeMode.Zoom;
+                //pbPreview.BorderStyle = BorderStyle.FixedSingle;
+                pbPreview.MouseDown += PreviewPic_MouseDown;
+                pbPreview.MouseMove += PreviewPic_MouseMove;
+                pbPreview.MouseUp += PreviewPic_MouseUp;
+                pbPreview.Paint += PreviewPic_Paint;
                 if (selected.Tag is ScanPage page)
-                    pictureBox2.Image = GetPageImage(page.ImageId);
-                previewPic = pictureBox2;
-                flowLayoutPanel1.Controls.Add(previewPic);
+                    pbPreview.Image = GetPageImage(page.ImageId);
+                previewPic = pbPreview;
+                flowLayoutPanel1.Controls.Add(pbPreview);
             }
+        }
+        private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            DisplayNodeDetail();
+        }
+
+        private void pbThumbnail_DoubleClick(object? sender, EventArgs e)
+        {
+            ucThumbnail pb = (ucThumbnail)sender;
+            TreeNode node = (TreeNode)pb.Tag;
+            treeView1.SelectedNode = node;
         }
 
         private void PreviewPic_Paint(object sender, PaintEventArgs e)
@@ -702,7 +873,7 @@ namespace HyperBPOScanTool
 
                 startPoint = System.Drawing.Point.Empty;
                 currentPoint = System.Drawing.Point.Empty;
-                previewPic.Image = res;
+                picBox.Image = res;
 
                 //picBox.Invalidate(); // Final paint update
                 //picBox.Refresh();
@@ -735,7 +906,7 @@ namespace HyperBPOScanTool
         bool isComparing = false;
         private void PreviewPic_MouseDown(object sender, MouseEventArgs e)
         {
-            if (((PictureBox)sender).BackgroundImage != null)
+            if (((PictureBox)sender).Image != null)
             {
                 if (e.Button == MouseButtons.Left)
                 {
@@ -752,7 +923,7 @@ namespace HyperBPOScanTool
             }
         }
 
-        public bool IsBitmapBlank(Bitmap bitmap, double threshold, out double stdDevVal)
+        public bool IsBitmapBlank(Bitmap bitmap, decimal threshold, out decimal stdDevVal)
         {
             // Lock the bitmap's bits to access raw memory quickly
             using (Mat img = bitmap.ToMat())
@@ -763,8 +934,8 @@ namespace HyperBPOScanTool
                 Cv2.MeanStdDev(img, out Scalar mean, out Scalar stdDev);
 
                 // A standard deviation below the threshold indicates high uniformity (blank)
-                stdDevVal = stdDev.Val0;
-                return stdDev.Val0 < threshold;
+                stdDevVal = (decimal)stdDev.Val0;
+                return (decimal)stdDev.Val0 < threshold;
             }
 
 
@@ -774,25 +945,47 @@ namespace HyperBPOScanTool
         {
 
             //listImage = null;
-            scanPack = new ScanPack();
+            scanPack = new ScanBatch();
             _currentFile = null;
             _currentSheet = null;
             currentFileNode = null;
             treeView1.Nodes[0].Nodes.Clear();
             flowLayoutPanel1.Controls.Clear();
-            _scanPackBackup = new ScanPack();
+            _scanPackBackup = new ScanBatch();
             originalPack = null;
+            var source = _twain.CurrentSource;
+            source.Close();
+            source.Open();
         }
 
-        private void groupBox2_Enter(object sender, EventArgs e)
-        {
 
-        }
 
-        ScanPack _scanPackBackup = new ScanPack();
+        ScanBatch _scanPackBackup = new ScanBatch();
         private void chkBlankPage_CheckedChanged(object sender, EventArgs e)
         {
             RefreshTreeView();
+        }
+
+        private void UpdateBlankValue(decimal val)
+        {
+            if (originalPack == null) return;
+            for (int j = 0; j < originalPack.ScanFiles.Count; j++)
+            {
+                ScanFile file = originalPack.ScanFiles[j];
+                foreach (ScanPage page in file.Pages)
+                {
+                    if (page.StdDevVal <= val)
+                    {
+                        page.IsBlank = true;
+                    }
+                    else
+                    {
+                        page.IsBlank = false;
+                    }
+                }
+
+
+            }
         }
         private void RefreshTreeView()
         {
@@ -817,15 +1010,36 @@ namespace HyperBPOScanTool
                     {
                         ScanFile file = _scanPackBackup.ScanFiles[j];
 
-                        if (file.IsBlankSheet && _separateObject.HideBlankSheet)
+                        if (_separateObject.SeparateMode != SeparateType.BlankSheet)
                         {
-                            _scanPackBackup.ScanFiles.RemoveAt(j);
-                            j--; // Adjust the index after removal
+                            if (file.IsBlankSheet && _separateObject.HideBlankSheet)
+                            {
+                                _scanPackBackup.ScanFiles.RemoveAt(j);
+                                j--;
+
+                            }
+                            if (_separateObject.HideBlankPage && !file.IsBlankSheet)
+                            {
+                                for (int i = 0; i < file.Pages.Count; i++)
+                                {
+                                    file.Pages[i].PageIndex = i + 1;
+                                    if (file.Pages[i].IsBlank && _separateObject.HideBlankPage)
+                                    {
+                                        file.Pages.RemoveAt(i);
+                                        i--; // Adjust the index after removal
+                                    }
+                                    //i++;
+                                }
+                            }
+
+                            // Adjust the index after removal
                         }
                         else
                         {
-                            if (!(!(_separateObject.SeparateMode == SeparateType.BlankSheet) && file.IsBlankSheet))
+                            //if (!(!(_separateObject.SeparateMode == SeparateType.BlankSheet) && file.IsBlankSheet))
+                            if (_separateObject.SeparateMode == SeparateType.BlankSheet)
                             {
+                                if (file.IsBlankSheet) break;
                                 for (int i = 0; i < file.Pages.Count; i++)
                                 {
                                     file.Pages[i].PageIndex = i + 1;
@@ -848,7 +1062,7 @@ namespace HyperBPOScanTool
 
 
         }
-        private void ReloadTreeView(ScanPack pack, SeparateType type)
+        private void ReloadTreeView(ScanBatch pack, SeparateType type)
         {
 
             treeView1.Nodes[0].Nodes.Clear();
@@ -861,7 +1075,7 @@ namespace HyperBPOScanTool
                     break;
                 case SeparateType.Persheet:
                     {
-                        scanPack = new ScanPack();
+                        scanPack = new ScanBatch();
                         foreach (ScanFile file in pack.ScanFiles)
                         {
                             scanPack.ScanFiles.Add(file);
@@ -871,7 +1085,7 @@ namespace HyperBPOScanTool
                     break;
                 case SeparateType.NumOfPage:
                     {
-                        scanPack = new ScanPack();
+                        scanPack = new ScanBatch();
                         int fileIndex = 1;
                         int pageIndex = 1;
                         int totalPage = _separateObject.TotalPage;
@@ -925,7 +1139,7 @@ namespace HyperBPOScanTool
                     break;
                 case SeparateType.BlankSheet:
                     {
-                        scanPack = new ScanPack();
+                        scanPack = new ScanBatch();
                         int fileIndex = 1;
 
                         ScanFile tmpFile = null;
@@ -976,7 +1190,7 @@ namespace HyperBPOScanTool
             if (File.Exists(datafile))
             {
                 string content = File.ReadAllText(datafile);
-                ScanPack data = JsonConvert.DeserializeObject<ScanPack>(content);
+                ScanBatch data = JsonConvert.DeserializeObject<ScanBatch>(content);
                 if (data != null)
                 {
                     originalPack = data;
@@ -994,8 +1208,8 @@ namespace HyperBPOScanTool
 
 
 
-        
-        WhiteBorderObject _whiteBorderSetting = new WhiteBorderObject { Top=10,Right=10,Bottom=10,Left=10};
+
+        WhiteBorderObject _whiteBorderSetting = new WhiteBorderObject { Top = 10, Right = 10, Bottom = 10, Left = 10 };
         private void PreviewWhiteBorder(WhiteBorderObject border)
         {
             _whiteBorderSetting = border;
@@ -1032,7 +1246,9 @@ namespace HyperBPOScanTool
             }
         }
 
-        private void btnApply_Click(object sender, EventArgs e)
+
+
+        private void ApplyChangeOneImage()
         {
             if (lastselectedNode != null)
             {
@@ -1047,17 +1263,35 @@ namespace HyperBPOScanTool
         private void ApplyCurrentPicture(WhiteBorderObject border)
         {
             _whiteBorderSetting = border;
-            if (previewPic.Image != null)
+            if (previewPic != null && previewPic.Image != null)
             {
                 previewPic.Image = ImageUtils.AddOuterWhiteBorder((Bitmap)previewPic.Image, _whiteBorderSetting.Top, _whiteBorderSetting.Right, _whiteBorderSetting.Bottom, _whiteBorderSetting.Left);
+                //previewPic.Image = ImageUtils.AddOuterWhiteBorder((Bitmap)previewPic.Image, border.Top, border.Right, border.Bottom, border.Left);
+                ScanPage selectedPage = lastselectedNode.Tag as ScanPage;
+                UpdatePageImage(selectedPage.ImageId, previewPic.Image);
             }
+            else //kiểm tra nếu có thumbnail dc chọn
+            {
+                foreach(object child in flowLayoutPanel1.Controls)
+                {
+                    ucThumbnail tmp = (ucThumbnail)child;
+                    if (tmp.IsSelected)
+                    {
+                        tmp.Image = ImageUtils.AddOuterWhiteBorder((Bitmap)tmp.Image, _whiteBorderSetting.Top, _whiteBorderSetting.Right, _whiteBorderSetting.Bottom, _whiteBorderSetting.Left);
+                        //previewPic.Image = ImageUtils.AddOuterWhiteBorder((Bitmap)previewPic.Image, border.Top, border.Right, border.Bottom, border.Left);
+                        ScanPage selectedPage = tmp.ScanPage;
+                        UpdatePageImage(selectedPage.ImageId, tmp.Image);
+                    }
+                }
+            }
+            //DisplayNodeDetail();
         }
 
         private void ApplyAllBatchPicture(WhiteBorderObject border)
         {
             _whiteBorderSetting = border;
-           
-            if (previewPic.Image != null)
+
+            if (previewPic != null && previewPic.Image != null)
             {
                 previewPic.Image = ImageUtils.AddOuterWhiteBorder((Bitmap)previewPic.Image, _whiteBorderSetting.Top, _whiteBorderSetting.Right, _whiteBorderSetting.Bottom, _whiteBorderSetting.Left);
             }
@@ -1068,12 +1302,52 @@ namespace HyperBPOScanTool
                     page.PageImage = ImageUtils.AddOuterWhiteBorder((Bitmap)page.PageImage, _whiteBorderSetting.Top, _whiteBorderSetting.Right, _whiteBorderSetting.Bottom, _whiteBorderSetting.Left);
                 }
             }
+            DisplayNodeDetail();
         }
 
-        
-
-        private void btnExportBatch_Click(object sender, EventArgs e)
+        private string GetSubfitIndexNumber(string prefitString, int index)
         {
+            string res = "";
+            string num = index.ToString();
+            string indexFormat = scanPack.IndexFormat;
+            prefitString = prefitString == null ? "Batch_" : prefitString;
+            indexFormat = indexFormat == null ? "" : indexFormat;
+            for (int i = 0; i < indexFormat.Length - num.Length; i++)
+            {
+                res = "0" + res;
+            }
+            return prefitString + res + index;
+
+        }
+
+        private async void btnExportBatch_Click(object sender, EventArgs e)
+        {
+            if (scanPack.BatchName == null || scanPack.ExportPath == null)
+            {
+                MessageBox.Show("Export name or export path is empty!");
+            }
+            else
+            {
+                lblStatusText.Text = "Exporting...";
+                var progress = new Progress<int>(percent =>
+                {
+                    tsProgressBar.Value = percent;
+                    if (percent == 100)
+                    {
+                        MessageBox.Show("Export Done!");
+                        tsProgressBar.Value = 0;
+                        lblStatusText.Text = "Status";
+                    }
+                });
+                await Task.Run(() => ExportBatch(progress));
+                //MessageBox.Show("Export Done!");
+            }
+        }
+
+        private void ExportBatch(IProgress<int> progress)
+        {
+            int index = 1;
+
             foreach (ScanFile file in scanPack.ScanFiles)
             {
                 List<Image> images = new List<Image>();
@@ -1082,9 +1356,12 @@ namespace HyperBPOScanTool
                     images.Add(page.PageImage);
                 }
                 // Create PDF with the images
-
-                pdfUtils.CreatePDF(file.FileName + ".pdf", @"D:\ExportScanTool\", images);
+                string name = GetSubfitIndexNumber(scanPack.BatchName, index);
+                pdfUtils.CreatePDF(name + ".pdf", scanPack.ExportPath, images);
+                progress?.Report((int)((double)index / scanPack.ScanFiles.Count * 100));
+                index++;
             }
+
         }
 
         private void tsSelectScanner_SelectedChanged(object sender, EventArgs e)
@@ -1095,9 +1372,41 @@ namespace HyperBPOScanTool
         private void tsSeparate_Click(object sender, EventArgs e)
         {
             SeparateDialog separateDialog = new SeparateDialog(_separateObject);
+            if (originalPack != null && originalPack.ScanFiles.Count > 0) separateDialog.DisableSeparateMode = true;
             if (separateDialog.ShowDialog() == DialogResult.OK)
             {
+                bool hasChangeBlankValue = false;
+                if (_separateObject.BlankValue != separateDialog.SeparatedDataObject.BlankValue)
+                {
+                    hasChangeBlankValue = true;
+                    UpdateBlankValue(separateDialog.SeparatedDataObject.BlankValue);
+                }
                 _separateObject = separateDialog.SeparatedDataObject;
+                var source = _twain.CurrentSource;
+                // Kiểm tra xem máy quét có hỗ trợ ICAP_AUTODISCARDBLANKPAGES không
+                if (source.Capabilities.ICapAutoDiscardBlankPages.IsSupported)
+                {
+                    // Đặt chế độ tự động bỏ trang trắng (TWBP_AUTO = -2)
+                    BlankPage autoDiscardBlankPages = BlankPage.Disable;
+                    if (_separateObject.HideBlankPage)
+                    {
+                        autoDiscardBlankPages = BlankPage.Auto;
+                    }
+                    var status = source.Capabilities.ICapAutoDiscardBlankPages.SetValue(autoDiscardBlankPages);
+
+                    if (status == ReturnCode.Success)
+                    {
+                        Console.WriteLine("Đã bật tính năng tự động loại bỏ trang trắng (TWBP_AUTO).");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Máy quét hỗ trợ nhưng không thể đặt giá trị TWBP_AUTO.");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Máy quét không hỗ trợ ICAP_AUTODISCARDBLANKPAGES.");
+                }
                 RefreshTreeView();
             }
         }
@@ -1109,9 +1418,201 @@ namespace HyperBPOScanTool
             whiteBorderDialog.CallPreview = PreviewWhiteBorder;
             whiteBorderDialog.CallApply = ApplyCurrentPicture;
             whiteBorderDialog.CallApplyAll = ApplyAllBatchPicture;
-                ;
+            ;
             whiteBorderDialog.ShowDialog();
-            
+
         }
+
+        private void miIsblank_Click(object sender, EventArgs e)
+        {
+            TreeNode selectedNode = treeView1.SelectedNode;
+            if (selectedNode.Tag is ScanPage)
+            {
+                ScanPage page = (ScanPage)selectedNode.Tag;
+                _separateObject.BlankValue = (decimal)page.StdDevVal;
+                UpdateBlankValue(_separateObject.BlankValue);
+                RefreshTreeView();
+            }
+        }
+
+        private void treeView1_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                treeView1.SelectedNode = e.Node;
+                TreeNode selected = e.Node;
+                if (selected.Tag == "root")
+                {
+                    DisplayRootNodeMenu();
+
+                }
+                else if (selected.Tag != null && selected.Tag is ScanFile)
+                {
+                    DisplayFileNodeMenu();
+                }
+                else if (selected.Tag != null && selected.Tag is ScanPage)
+                {
+                    DisplayPageNodeMenu();
+                }
+                menuTreview.Show(treeView1, e.X, e.Y);
+            }
+
+        }
+
+        private void DisplayRootNodeMenu()
+        {
+            miIsblank.Enabled = false;
+            miAddNew.Enabled = true;
+            miInsertScan.Enabled = false;
+            miRescan.Enabled = false;
+            miDelete.Enabled = false;
+            miRename.Enabled = true;
+        }
+        private void DisplayFileNodeMenu()
+        {
+            miIsblank.Enabled = false;
+            miAddNew.Enabled = true;
+            miInsertScan.Enabled = true;
+            miRescan.Enabled = true;
+            miDelete.Enabled = true;
+            miRename.Enabled = false;
+        }
+        private void DisplayPageNodeMenu()
+        {
+            miIsblank.Enabled = true;
+            miAddNew.Enabled = false;
+            miInsertScan.Enabled = true;
+            miRescan.Enabled = true;
+            miDelete.Enabled = true;
+            miRename.Enabled = false;
+        }
+
+        private void DisplayNoNodeMenu()
+        {
+            miIsblank.Enabled = false;
+            miAddNew.Enabled = true;
+            miInsertScan.Enabled = false;
+            miRescan.Enabled = false;
+            miDelete.Enabled = false;
+            miRename.Enabled = false;
+        }
+
+        private void treeView1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void treeView1_MouseClick(object sender, MouseEventArgs e)
+        {
+            treeView1.SelectedNode = null;
+        }
+        private void UpdateBatchName(string newName)
+        {
+            treeView1.Nodes[0].Text = newName;
+        }
+        private void miRename_Click(object sender, EventArgs e)
+        {
+            BatchRename renameDialog = new BatchRename();
+            if (renameDialog.ShowDialog() == DialogResult.OK)
+            {
+                // Update the batch name
+                UpdateBatchName(renameDialog.NewBatchName);
+            }
+        }
+
+        private void tsNewBatch_Click(object sender, EventArgs e)
+        {
+            BatchSetting batchSettingDialog = new BatchSetting();
+            batchSettingDialog.ExportPath = scanPack.ExportPath;
+            batchSettingDialog.BatchName = scanPack.BatchName;
+            batchSettingDialog.IndexFormat = scanPack.IndexFormat;
+            if (batchSettingDialog.ShowDialog() == DialogResult.OK)
+            {
+                // Update the batch name
+                UpdateBatchName(batchSettingDialog.BatchName);
+                // Update the export path
+                if (scanPack == null)
+                {
+                    scanPack = new ScanBatch();
+                }
+                scanPack.ExportPath = batchSettingDialog.ExportPath;
+                scanPack.BatchName = batchSettingDialog.BatchName;
+                scanPack.IndexFormat = batchSettingDialog.IndexFormat;
+            }
+        }
+
+        private void tsRotateRight_Click(object sender, EventArgs e)
+        {
+            if (previewPic != null && previewPic.Image != null)
+            {
+                previewPic.Image = ImageUtils.RotateDegrees((Bitmap)previewPic.Image, true);
+                ApplyChangeOneImage();
+            }
+            else
+            {
+                foreach (object child in flowLayoutPanel1.Controls)
+                {
+                    ucThumbnail tmp = (ucThumbnail)child;
+                    if (tmp.IsSelected)
+                    {
+                        tmp.Image = ImageUtils.RotateDegrees((Bitmap)tmp.Image, true);
+                        //previewPic.Image = ImageUtils.AddOuterWhiteBorder((Bitmap)previewPic.Image, border.Top, border.Right, border.Bottom, border.Left);
+                        ScanPage selectedPage = tmp.ScanPage;
+                        UpdatePageImage(selectedPage.ImageId, tmp.Image);
+                    }
+                }
+            }
+
+        }
+
+        private void tsRotateLeft_Click(object sender, EventArgs e)
+        {
+            if (previewPic != null && previewPic.Image != null)
+            {
+
+                previewPic.Image = ImageUtils.RotateDegrees((Bitmap)previewPic.Image, false);
+                ApplyChangeOneImage();
+            }
+            else
+            {
+                foreach (object child in flowLayoutPanel1.Controls)
+                {
+                    ucThumbnail tmp = (ucThumbnail)child;
+                    if (tmp.IsSelected)
+                    {
+                        tmp.Image = ImageUtils.RotateDegrees((Bitmap)tmp.Image, false);
+                        //previewPic.Image = ImageUtils.AddOuterWhiteBorder((Bitmap)previewPic.Image, border.Top, border.Right, border.Bottom, border.Left);
+                        ScanPage selectedPage = tmp.ScanPage;
+                        UpdatePageImage(selectedPage.ImageId, tmp.Image);
+                    }
+                }
+            }
+        }
+
+        private void tsUpDown_Click(object sender, EventArgs e)
+        {
+            if (previewPic != null && previewPic.Image != null)
+            {
+
+                previewPic.Image = ImageUtils.RotateDegrees((Bitmap)previewPic.Image, true, true);
+                ApplyChangeOneImage();
+            }
+            else
+            {
+                foreach (object child in flowLayoutPanel1.Controls)
+                {
+                    ucThumbnail tmp = (ucThumbnail)child;
+                    if (tmp.IsSelected)
+                    {
+                        tmp.Image = ImageUtils.RotateDegrees((Bitmap)tmp.Image, true, true);
+                        //previewPic.Image = ImageUtils.AddOuterWhiteBorder((Bitmap)previewPic.Image, border.Top, border.Right, border.Bottom, border.Left);
+                        ScanPage selectedPage = tmp.ScanPage;
+                        UpdatePageImage(selectedPage.ImageId, tmp.Image);
+                    }
+                }
+            }
+        }
+
+        
     }
 }
