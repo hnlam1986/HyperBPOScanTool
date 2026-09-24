@@ -33,6 +33,7 @@
             folderBrowserDialog1 = new FolderBrowserDialog();
             tabControl1 = new TabControl();
             tabPage1 = new TabPage();
+            chkSubfolder = new CheckBox();
             label3 = new Label();
             txtIndexFormat = new TextBox();
             label1 = new Label();
@@ -57,6 +58,8 @@
             txtLeftBorder = new TextBox();
             txtTopBorder = new TextBox();
             btnOK = new Button();
+            txtSeparateChar = new TextBox();
+            label4 = new Label();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
             tabPage2.SuspendLayout();
@@ -66,7 +69,7 @@
             // lblExportPath
             // 
             lblExportPath.AutoSize = true;
-            lblExportPath.Location = new Point(106, 102);
+            lblExportPath.Location = new Point(106, 165);
             lblExportPath.Name = "lblExportPath";
             lblExportPath.Size = new Size(16, 15);
             lblExportPath.TabIndex = 0;
@@ -74,7 +77,7 @@
             // 
             // btnSelectpath
             // 
-            btnSelectpath.Location = new Point(10, 98);
+            btnSelectpath.Location = new Point(10, 161);
             btnSelectpath.Name = "btnSelectpath";
             btnSelectpath.Size = new Size(90, 23);
             btnSelectpath.TabIndex = 1;
@@ -90,11 +93,14 @@
             tabControl1.Location = new Point(0, 0);
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
-            tabControl1.Size = new Size(520, 215);
+            tabControl1.Size = new Size(520, 231);
             tabControl1.TabIndex = 2;
             // 
             // tabPage1
             // 
+            tabPage1.Controls.Add(txtSeparateChar);
+            tabPage1.Controls.Add(label4);
+            tabPage1.Controls.Add(chkSubfolder);
             tabPage1.Controls.Add(label3);
             tabPage1.Controls.Add(txtIndexFormat);
             tabPage1.Controls.Add(label1);
@@ -105,15 +111,25 @@
             tabPage1.Location = new Point(4, 24);
             tabPage1.Name = "tabPage1";
             tabPage1.Padding = new Padding(3);
-            tabPage1.Size = new Size(512, 187);
+            tabPage1.Size = new Size(512, 203);
             tabPage1.TabIndex = 0;
             tabPage1.Text = "General";
             tabPage1.UseVisualStyleBackColor = true;
             // 
+            // chkSubfolder
+            // 
+            chkSubfolder.AutoSize = true;
+            chkSubfolder.Location = new Point(99, 45);
+            chkSubfolder.Name = "chkSubfolder";
+            chkSubfolder.Size = new Size(205, 19);
+            chkSubfolder.TabIndex = 7;
+            chkSubfolder.Text = "Create subfolder with batch name";
+            chkSubfolder.UseVisualStyleBackColor = true;
+            // 
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(97, 71);
+            label3.Location = new Point(97, 134);
             label3.Name = "label3";
             label3.Size = new Size(258, 15);
             label3.TabIndex = 6;
@@ -121,7 +137,7 @@
             // 
             // txtIndexFormat
             // 
-            txtIndexFormat.Location = new Point(97, 45);
+            txtIndexFormat.Location = new Point(97, 108);
             txtIndexFormat.Name = "txtIndexFormat";
             txtIndexFormat.Size = new Size(384, 23);
             txtIndexFormat.TabIndex = 5;
@@ -129,7 +145,7 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(10, 48);
+            label1.Location = new Point(10, 111);
             label1.Name = "label1";
             label1.Size = new Size(74, 15);
             label1.TabIndex = 4;
@@ -349,7 +365,7 @@
             // 
             // btnOK
             // 
-            btnOK.Location = new Point(417, 221);
+            btnOK.Location = new Point(417, 237);
             btnOK.Name = "btnOK";
             btnOK.Size = new Size(92, 35);
             btnOK.TabIndex = 3;
@@ -357,11 +373,27 @@
             btnOK.UseVisualStyleBackColor = true;
             btnOK.Click += btnOK_Click;
             // 
+            // txtSeparateChar
+            // 
+            txtSeparateChar.Location = new Point(97, 70);
+            txtSeparateChar.Name = "txtSeparateChar";
+            txtSeparateChar.Size = new Size(384, 23);
+            txtSeparateChar.TabIndex = 9;
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Location = new Point(10, 73);
+            label4.Name = "label4";
+            label4.Size = new Size(78, 15);
+            label4.TabIndex = 8;
+            label4.Text = "Separate char";
+            // 
             // BatchSetting
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(521, 268);
+            ClientSize = new Size(521, 284);
             Controls.Add(btnOK);
             Controls.Add(tabControl1);
             Name = "BatchSetting";
@@ -408,5 +440,8 @@
         private Label label3;
         private TextBox txtIndexFormat;
         private Label label1;
+        private CheckBox chkSubfolder;
+        private TextBox txtSeparateChar;
+        private Label label4;
     }
 }

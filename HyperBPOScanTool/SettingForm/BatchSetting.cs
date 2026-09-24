@@ -21,6 +21,11 @@ namespace HyperBPOScanTool
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public string IndexFormat { get; set; }
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+
+        public string SeparateChar { get; set; }
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public bool CreateSubFolder { get; set; }
 
         private void btnSelectpath_Click(object sender, EventArgs e)
         {
@@ -37,7 +42,8 @@ namespace HyperBPOScanTool
             DialogResult = DialogResult.OK;
             BatchName = txtBatchName.Text;
             IndexFormat = txtIndexFormat.Text;
-
+            SeparateChar = txtSeparateChar.Text;
+            CreateSubFolder = chkSubfolder.Checked;
         }
 
         private void BatchSetting_Load(object sender, EventArgs e)
@@ -45,6 +51,8 @@ namespace HyperBPOScanTool
              txtBatchName.Text = BatchName;
              txtIndexFormat.Text = IndexFormat;
             lblExportPath.Text = ExportPath;
+            txtSeparateChar.Text = SeparateChar;
+            chkSubfolder.Checked = CreateSubFolder;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using NTwain.Data;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -25,7 +26,23 @@ namespace HyperBPOScanTool
         public List<ScanFile> ScanFiles { get; set; }
         public string BatchName { get; set; }
         public string ExportPath { get; set; }
+
+        public string GetFullExportPath()
+        {
+            string res = "";
+            if (CreateSubFolder)
+            {
+                res = System.IO.Path.Combine(ExportPath, BatchName);
+            }
+            else
+            {
+                res = ExportPath;
+            }
+            return res;
+        }
         public string IndexFormat { get; set; }
+        public string SeparateChar { get; set; }
+        public bool CreateSubFolder { get; set; }
         public ScanBatch Clone()
         {
             ScanBatch newPack = new ScanBatch();
@@ -87,10 +104,32 @@ namespace HyperBPOScanTool
         public string SheetName { get; set; }
         public string SheetId { get; set; }
         public int SheetIndex { get; set; }
-        public bool IsBlankSheet { get { return Top.IsBlank && Bottom.IsBlank; } set; }
+        public bool IsBlankSheet { get {
+                if (Top == null && Bottom == null) return true;
+                else if (Top != null && Bottom != null) return Top.IsBlank && Bottom.IsBlank;
+                else if (Top != null || Bottom != null) return false;
+                
+                return false;
+            } set; }
         public ScanPage Top { get; set; }
         public ScanPage Bottom { get; set; }
 
+    }
+    public enum CamMode
+    {
+        Top,
+        Bottom
+    }
+    public class ScanImage
+    {
+        
+        public ScanImage()
+        {
+                
+        }
+        public Image Image { get; set; }
+        public int DocIndex { get; set; }
+        public CamMode CamMode { get; set; }
     }
 
 }
