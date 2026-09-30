@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            TreeNode treeNode2 = new TreeNode("Batch");
             saveFileDialog1 = new SaveFileDialog();
             flowLayoutPanel1 = new FlowLayoutPanel();
             statusStrip1 = new StatusStrip();
@@ -55,12 +54,15 @@
             tsRotateRight = new ToolStripButton();
             tsRotateLeft = new ToolStripButton();
             tsUpDown = new ToolStripButton();
-            tsStraigth = new ToolStripButton();
-            toolStripSeparator2 = new ToolStripSeparator();
             tsDeletePage = new ToolStripButton();
+            tsWhiteBorder = new ToolStripButton();
+            toolStripSeparator2 = new ToolStripSeparator();
+            tsStraigth = new ToolStripButton();
             tsClearArea = new ToolStripButton();
             tsRescan = new ToolStripButton();
-            tsWhiteBorder = new ToolStripButton();
+            toolStripSeparator6 = new ToolStripSeparator();
+            tsOK = new ToolStripButton();
+            tsCancel = new ToolStripButton();
             toolStrip2 = new ToolStrip();
             tsNewBatch = new ToolStripButton();
             txOpenBatch = new ToolStripButton();
@@ -79,6 +81,13 @@
             miRescan = new ToolStripMenuItem();
             toolStripSeparator4 = new ToolStripSeparator();
             miRename = new ToolStripMenuItem();
+            toolStripStatusLabel1 = new ToolStripStatusLabel();
+            toolStripStatusLabel2 = new ToolStripStatusLabel();
+            toolStripStatusLabel3 = new ToolStripStatusLabel();
+            toolStripStatusLabel4 = new ToolStripStatusLabel();
+            toolStripStatusLabel5 = new ToolStripStatusLabel();
+            toolStripStatusLabel6 = new ToolStripStatusLabel();
+            toolStripStatusLabel7 = new ToolStripStatusLabel();
             statusStrip1.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
@@ -113,8 +122,9 @@
             // 
             // statusStrip1
             // 
+            statusStrip1.AutoSize = false;
             statusStrip1.Dock = DockStyle.Fill;
-            statusStrip1.Items.AddRange(new ToolStripItem[] { lblStatusText, tsProgressBar });
+            statusStrip1.Items.AddRange(new ToolStripItem[] { lblStatusText, tsProgressBar, toolStripStatusLabel1, toolStripStatusLabel5, toolStripStatusLabel4, toolStripStatusLabel2, toolStripStatusLabel7, toolStripStatusLabel6, toolStripStatusLabel3 });
             statusStrip1.Location = new Point(0, 1191);
             statusStrip1.Name = "statusStrip1";
             statusStrip1.Size = new Size(1549, 30);
@@ -137,9 +147,9 @@
             // 
             tableLayoutPanel1.ColumnCount = 1;
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanel1.Controls.Add(statusStrip1, 0, 4);
             tableLayoutPanel1.Controls.Add(splitContainer1, 0, 3);
             tableLayoutPanel1.Controls.Add(menuStrip1, 0, 0);
-            tableLayoutPanel1.Controls.Add(statusStrip1, 0, 4);
             tableLayoutPanel1.Controls.Add(panel2, 0, 1);
             tableLayoutPanel1.Controls.Add(panel3, 0, 2);
             tableLayoutPanel1.Dock = DockStyle.Fill;
@@ -177,10 +187,6 @@
             treeView1.Location = new Point(0, 0);
             treeView1.Margin = new Padding(4, 3, 4, 3);
             treeView1.Name = "treeView1";
-            treeNode2.Name = "packNode";
-            treeNode2.Tag = "root";
-            treeNode2.Text = "Batch";
-            treeView1.Nodes.AddRange(new TreeNode[] { treeNode2 });
             treeView1.Size = new Size(296, 1075);
             treeView1.TabIndex = 8;
             treeView1.AfterSelect += treeView1_AfterSelect;
@@ -307,10 +313,10 @@
             // 
             toolStrip1.AutoSize = false;
             toolStrip1.Dock = DockStyle.None;
-            toolStrip1.Items.AddRange(new ToolStripItem[] { tsRotateRight, tsRotateLeft, tsUpDown, tsDeletePage, tsWhiteBorder, toolStripSeparator2, tsStraigth, tsClearArea, tsRescan });
+            toolStrip1.Items.AddRange(new ToolStripItem[] { tsRotateRight, tsRotateLeft, tsUpDown, tsDeletePage, tsWhiteBorder, toolStripSeparator2, tsStraigth, tsClearArea, tsRescan, toolStripSeparator6, tsOK, tsCancel });
             toolStrip1.Location = new Point(317, 1);
             toolStrip1.Name = "toolStrip1";
-            toolStrip1.Size = new Size(376, 37);
+            toolStrip1.Size = new Size(472, 37);
             toolStrip1.TabIndex = 8;
             toolStrip1.Text = "toolStrip1";
             // 
@@ -347,6 +353,33 @@
             tsUpDown.Text = "Up/Down";
             tsUpDown.Click += tsUpDown_Click;
             // 
+            // tsDeletePage
+            // 
+            tsDeletePage.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            tsDeletePage.Image = Properties.Resources.delete_page;
+            tsDeletePage.ImageScaling = ToolStripItemImageScaling.None;
+            tsDeletePage.ImageTransparentColor = Color.Magenta;
+            tsDeletePage.Name = "tsDeletePage";
+            tsDeletePage.Size = new Size(44, 34);
+            tsDeletePage.Text = "Delete page";
+            tsDeletePage.Click += tsDeletePage_Click;
+            // 
+            // tsWhiteBorder
+            // 
+            tsWhiteBorder.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            tsWhiteBorder.Image = Properties.Resources.border_small;
+            tsWhiteBorder.ImageScaling = ToolStripItemImageScaling.None;
+            tsWhiteBorder.ImageTransparentColor = Color.Magenta;
+            tsWhiteBorder.Name = "tsWhiteBorder";
+            tsWhiteBorder.Size = new Size(44, 34);
+            tsWhiteBorder.Text = "Remove back border";
+            tsWhiteBorder.Click += tsWhiteBorder_Click;
+            // 
+            // toolStripSeparator2
+            // 
+            toolStripSeparator2.Name = "toolStripSeparator2";
+            toolStripSeparator2.Size = new Size(6, 37);
+            // 
             // tsStraigth
             // 
             tsStraigth.DisplayStyle = ToolStripItemDisplayStyle.Image;
@@ -357,21 +390,7 @@
             tsStraigth.Name = "tsStraigth";
             tsStraigth.Size = new Size(44, 34);
             tsStraigth.Text = "toolStripButton12";
-            // 
-            // toolStripSeparator2
-            // 
-            toolStripSeparator2.Name = "toolStripSeparator2";
-            toolStripSeparator2.Size = new Size(6, 37);
-            // 
-            // tsDeletePage
-            // 
-            tsDeletePage.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            tsDeletePage.Image = Properties.Resources.delete_page;
-            tsDeletePage.ImageScaling = ToolStripItemImageScaling.None;
-            tsDeletePage.ImageTransparentColor = Color.Magenta;
-            tsDeletePage.Name = "tsDeletePage";
-            tsDeletePage.Size = new Size(44, 34);
-            tsDeletePage.Text = "Delete page";
+            tsStraigth.Click += tsStraigth_Click;
             // 
             // tsClearArea
             // 
@@ -394,17 +413,36 @@
             tsRescan.Name = "tsRescan";
             tsRescan.Size = new Size(44, 34);
             tsRescan.Text = "Re-Scan";
+            tsRescan.Click += tsRescan_Click;
             // 
-            // tsWhiteBorder
+            // toolStripSeparator6
             // 
-            tsWhiteBorder.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            tsWhiteBorder.Image = Properties.Resources.border_small;
-            tsWhiteBorder.ImageScaling = ToolStripItemImageScaling.None;
-            tsWhiteBorder.ImageTransparentColor = Color.Magenta;
-            tsWhiteBorder.Name = "tsWhiteBorder";
-            tsWhiteBorder.Size = new Size(44, 34);
-            tsWhiteBorder.Text = "Remove back border";
-            tsWhiteBorder.Click += tsWhiteBorder_Click;
+            toolStripSeparator6.Name = "toolStripSeparator6";
+            toolStripSeparator6.Size = new Size(6, 37);
+            // 
+            // tsOK
+            // 
+            tsOK.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            tsOK.Image = Properties.Resources.ok;
+            tsOK.ImageScaling = ToolStripItemImageScaling.None;
+            tsOK.ImageTransparentColor = Color.Magenta;
+            tsOK.Name = "tsOK";
+            tsOK.Size = new Size(44, 34);
+            tsOK.Text = "toolStripButton1";
+            tsOK.Visible = false;
+            tsOK.Click += tsOK_Click;
+            // 
+            // tsCancel
+            // 
+            tsCancel.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            tsCancel.Image = Properties.Resources.cancel;
+            tsCancel.ImageScaling = ToolStripItemImageScaling.None;
+            tsCancel.ImageTransparentColor = Color.Magenta;
+            tsCancel.Name = "tsCancel";
+            tsCancel.Size = new Size(44, 34);
+            tsCancel.Text = "toolStripButton2";
+            tsCancel.Visible = false;
+            tsCancel.Click += tsCancel_Click;
             // 
             // toolStrip2
             // 
@@ -519,6 +557,7 @@
             miDelete.Name = "miDelete";
             miDelete.Size = new Size(130, 22);
             miDelete.Text = "Delete";
+            miDelete.Click += miDelete_Click;
             // 
             // toolStripSeparator5
             // 
@@ -531,6 +570,7 @@
             miInsertScan.Name = "miInsertScan";
             miInsertScan.Size = new Size(130, 22);
             miInsertScan.Text = "Insert scan";
+            miInsertScan.Click += miInsertScan_Click;
             // 
             // miRescan
             // 
@@ -538,6 +578,7 @@
             miRescan.Name = "miRescan";
             miRescan.Size = new Size(130, 22);
             miRescan.Text = "ReScan";
+            miRescan.Click += miRescan_Click;
             // 
             // toolStripSeparator4
             // 
@@ -551,6 +592,49 @@
             miRename.Size = new Size(130, 22);
             miRename.Text = "Rename";
             miRename.Click += miRename_Click;
+            // 
+            // toolStripStatusLabel1
+            // 
+            toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            toolStripStatusLabel1.Size = new Size(735, 25);
+            toolStripStatusLabel1.Spring = true;
+            // 
+            // toolStripStatusLabel2
+            // 
+            toolStripStatusLabel2.Name = "toolStripStatusLabel2";
+            toolStripStatusLabel2.Size = new Size(59, 25);
+            toolStripStatusLabel2.Text = "100 pages";
+            // 
+            // toolStripStatusLabel3
+            // 
+            toolStripStatusLabel3.Name = "toolStripStatusLabel3";
+            toolStripStatusLabel3.Size = new Size(47, 25);
+            toolStripStatusLabel3.Text = "3 pages";
+            // 
+            // toolStripStatusLabel4
+            // 
+            toolStripStatusLabel4.Name = "toolStripStatusLabel4";
+            toolStripStatusLabel4.Size = new Size(37, 25);
+            toolStripStatusLabel4.Text = "2 files";
+            // 
+            // toolStripStatusLabel5
+            // 
+            toolStripStatusLabel5.Name = "toolStripStatusLabel5";
+            toolStripStatusLabel5.Size = new Size(64, 25);
+            toolStripStatusLabel5.Text = "Batch info:";
+            // 
+            // toolStripStatusLabel6
+            // 
+            toolStripStatusLabel6.Name = "toolStripStatusLabel6";
+            toolStripStatusLabel6.Size = new Size(73, 25);
+            toolStripStatusLabel6.Text = "Selected file:";
+            // 
+            // toolStripStatusLabel7
+            // 
+            toolStripStatusLabel7.ForeColor = SystemColors.ControlDark;
+            toolStripStatusLabel7.Name = "toolStripStatusLabel7";
+            toolStripStatusLabel7.Size = new Size(10, 25);
+            toolStripStatusLabel7.Text = "|";
             // 
             // ScanForm
             // 
@@ -638,6 +722,16 @@
         private ToolStripSeparator toolStripSeparator4;
         private ToolStripMenuItem miRename;
         private ToolStripSeparator toolStripSeparator5;
+        private ToolStripSeparator toolStripSeparator6;
+        private ToolStripButton tsOK;
+        private ToolStripButton tsCancel;
+        private ToolStripStatusLabel toolStripStatusLabel1;
+        private ToolStripStatusLabel toolStripStatusLabel5;
+        private ToolStripStatusLabel toolStripStatusLabel4;
+        private ToolStripStatusLabel toolStripStatusLabel2;
+        private ToolStripStatusLabel toolStripStatusLabel3;
+        private ToolStripStatusLabel toolStripStatusLabel7;
+        private ToolStripStatusLabel toolStripStatusLabel6;
     }
 }
 

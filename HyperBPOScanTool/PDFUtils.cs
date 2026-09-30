@@ -1,11 +1,14 @@
 ﻿using PdfSharp.Drawing;
 using PdfSharp.Pdf;
+using PdfSharp.Pdf.Advanced;
+using PdfSharp.Pdf.IO;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -27,7 +30,7 @@ namespace HyperBPOScanTool
                     
                     using (MemoryStream ms = new MemoryStream())
                     {
-                        img.Save(ms, ImageFormat.Png);
+                        img.Save(ms, ImageFormat.Jpeg);
                         ms.Position = 0;
                         using (XImage xImage = XImage.FromStream(ms))
                         {
@@ -50,5 +53,7 @@ namespace HyperBPOScanTool
                 return false;
             }
         }
+
+        
     }
 }
