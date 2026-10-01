@@ -151,6 +151,26 @@ namespace HyperBPOScanTool
                     }
                     break;
             }
+            DisplayBatchInfo();
+        }
+
+        private void DisplayBatchInfo()
+        {
+            this.BeginInvoke(new Action(() =>
+            {
+                tslblTotalFile.Text = "Total File: " + scanPack.GetTotalFileCount() + " files";
+                tslblTotalPages.Text = "Total Sheet: " + scanPack.GetTotalPageCount() + " pages";
+                if (lastselectedNode.NodeType == NodeType.File)
+                {
+                    ScanFile file = lastselectedNode.ScanObject as ScanFile;
+                    tslblSelectedTotalPage.Text = scanPack.GetTotalPageCountByFile(file.FileId) + " pages";
+                }
+                else
+                {
+                    tslblSelectedTotalPage.Text = "";
+                }
+
+            }));
         }
 
         private MyTreeNode AddFile(ScanFile file)
@@ -499,6 +519,8 @@ namespace HyperBPOScanTool
                 {
                     MessageBox.Show("Can not open this scanner, please make sure this scan device is turnin ON");
                 }
+                toolStrip1.Enabled = true;
+                toolStrip2.Enabled = true;
             }
         }
         private void DoScan()
@@ -840,6 +862,8 @@ namespace HyperBPOScanTool
 
         private async void TestForm_Load(object sender, EventArgs e)
         {
+            toolStrip1.Enabled = false;
+            toolStrip2.Enabled = false;
             ImageList listImage = new ImageList();
             listImage.Images.Add(Properties.Resources.batch); //0
             listImage.Images.Add(Properties.Resources.document);  //1
@@ -1019,6 +1043,7 @@ namespace HyperBPOScanTool
         {
 
             DisplayNodeDetail();
+            DisplayBatchInfo();
         }
 
         private void pbThumbnail_DoubleClick(object? sender, EventArgs e)
@@ -1159,9 +1184,12 @@ namespace HyperBPOScanTool
                 _scanPackBackup = new ScanBatch();
                 originalPack = null;
                 var source = _twain.CurrentSource;
-                source.Close();
-                source.Open();
-                SetDiscardBlankPage(_separateObject);
+                if (source != null)
+                {
+                    source.Close();
+                    source.Open();
+                    SetDiscardBlankPage(_separateObject);
+                }
             }
         }
 
@@ -1550,37 +1578,38 @@ namespace HyperBPOScanTool
 
         private async void btnExportBatch_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("Do you want to export this scan batch?", "Export scan batch", MessageBoxButtons.OKCancel) == DialogResult.OK)
+            if (scanPack.BatchName == null || scanPack.ExportPath == null)
             {
-                if (scanPack.BatchName == null || scanPack.ExportPath == null)
-                {
-                    MessageBox.Show("Export name or export path is empty!");
-                }
-                else
-                {
-                    lblStatusText.Text = "Exporting...";
+                MessageBox.Show("Export name or export path is empty!");
+            }
+            else if (scanPack.ScanFiles == null || scanPack.ScanFiles.Count == 0)
+            {
+                MessageBox.Show("No data to export!", "Export scan batch", MessageBoxButtons.OK);
+            }
+            else if (MessageBox.Show("Do you want to export this scan batch?", "Export scan batch", MessageBoxButtons.OKCancel) == DialogResult.OK)
+            {
+                lblStatusText.Text = "Exporting...";
 
-                    if (scanPack.CreateSubFolder)
+                if (scanPack.CreateSubFolder)
+                {
+                    string path = System.IO.Path.Combine(scanPack.ExportPath, scanPack.BatchName);
+                    if (!Directory.Exists(path))
                     {
-                        string path = System.IO.Path.Combine(scanPack.ExportPath, scanPack.BatchName);
-                        if (!Directory.Exists(path))
-                        {
-                            System.IO.Directory.CreateDirectory(path);
-                        }
+                        System.IO.Directory.CreateDirectory(path);
                     }
-                    var progress = new Progress<int>(percent =>
-                    {
-                        tsProgressBar.Value = percent;
-                        if (percent == 100)
-                        {
-                            MessageBox.Show("Export Done!");
-                            tsProgressBar.Value = 0;
-                            lblStatusText.Text = "Status";
-                        }
-                    });
-                    await Task.Run(() => ExportBatch(progress));
-                    //MessageBox.Show("Export Done!");
                 }
+                var progress = new Progress<int>(percent =>
+                {
+                    tsProgressBar.Value = percent;
+                    if (percent == 100)
+                    {
+                        MessageBox.Show("Export Done!");
+                        tsProgressBar.Value = 0;
+                        lblStatusText.Text = "Status";
+                    }
+                });
+                await Task.Run(() => ExportBatch(progress));
+                //MessageBox.Show("Export Done!");
             }
         }
 
@@ -1722,6 +1751,7 @@ namespace HyperBPOScanTool
             miRescan.Enabled = false;
             miDelete.Enabled = false;
             miRename.Enabled = true;
+            miSwapPage.Enabled = false;
         }
         private void DisplayFileNodeMenu()
         {
@@ -1731,6 +1761,7 @@ namespace HyperBPOScanTool
             miRescan.Enabled = false;
             miDelete.Enabled = true;
             miRename.Enabled = false;
+            miSwapPage.Enabled = false;
         }
         private void DisplaySheetNodeMenu()
         {
@@ -1740,6 +1771,7 @@ namespace HyperBPOScanTool
             miRescan.Enabled = true;
             miDelete.Enabled = true;
             miRename.Enabled = false;
+            miSwapPage.Enabled = true;
         }
         private void DisplayPageNodeMenu()
         {
@@ -1749,6 +1781,7 @@ namespace HyperBPOScanTool
             miRescan.Enabled = false;
             miDelete.Enabled = true;
             miRename.Enabled = false;
+            miSwapPage.Enabled = false;
         }
 
         private void DisplayNoNodeMenu()
@@ -1784,29 +1817,27 @@ namespace HyperBPOScanTool
             }
         }
 
+        BatchSettingObject _batchSetting = null;
         private void tsNewBatch_Click(object sender, EventArgs e)
         {
             BatchSetting batchSettingDialog = new BatchSetting();
-            batchSettingDialog.ExportPath = scanPack.ExportPath;
-            batchSettingDialog.BatchName = scanPack.BatchName;
-            batchSettingDialog.IndexFormat = scanPack.IndexFormat;
-            batchSettingDialog.CreateSubFolder = scanPack.CreateSubFolder;
-            batchSettingDialog.SeparateChar = scanPack.SeparateChar;
+            batchSettingDialog.CurrentBatchSetting = _batchSetting;
 
             if (batchSettingDialog.ShowDialog() == DialogResult.OK)
             {
+                _batchSetting = batchSettingDialog.CurrentBatchSetting;
                 // Update the batch name
-                UpdateBatchName(batchSettingDialog.BatchName);
+                UpdateBatchName(_batchSetting.BatchName);
                 // Update the export path
                 if (scanPack == null)
                 {
                     scanPack = new ScanBatch();
                 }
-                scanPack.ExportPath = batchSettingDialog.ExportPath;
-                scanPack.BatchName = batchSettingDialog.BatchName;
-                scanPack.IndexFormat = batchSettingDialog.IndexFormat;
-                scanPack.SeparateChar = batchSettingDialog.SeparateChar;
-                scanPack.CreateSubFolder = batchSettingDialog.CreateSubFolder;
+                scanPack.ExportPath = _batchSetting.ExportFolder;
+                scanPack.BatchName = _batchSetting.BatchName;
+                scanPack.IndexFormat = _batchSetting.IndexFormat;
+                scanPack.SeparateChar = _batchSetting.SeparateChar;
+                scanPack.CreateSubFolder = _batchSetting.HasCreateSubFolder;
             }
         }
 
@@ -1911,11 +1942,6 @@ namespace HyperBPOScanTool
             tsStraigth.Enabled = true;
             isStraightenMode = false;
         }
-
-        private void tsDeletePage_Click(object sender, EventArgs e)
-        {
-
-        }
         bool IsRescanMode = false;
         private void DoRescan()
         {
@@ -1962,9 +1988,111 @@ namespace HyperBPOScanTool
             else if (lastselectedNode.NodeType == NodeType.Sheet)
             {
                 ScanSheet sheet = lastselectedNode.ScanObject as ScanSheet;
-                scanPack.ScanFiles.Where(f=>f.Sheets.Contains(sheet)).ToList().ForEach(f=>f.Sheets.Remove(sheet));
+                scanPack.ScanFiles.Where(f => f.Sheets.Contains(sheet)).ToList().ForEach(f => f.Sheets.Remove(sheet));
                 treeView1.SelectedNode.Remove();
             }
+            else if (lastselectedNode.NodeType == NodeType.Page)
+            {
+                CallDeleteImage();
+            }
+        }
+
+        private void tsSwapPage_Click(object sender, EventArgs e)
+        {
+            if (lastselectedNode != null && lastselectedNode.NodeType == NodeType.Sheet)
+            {
+                lastselectedNode.SwapNode();
+                DisplayNodeDetail();
+            }
+        }
+        private void DeleteSelectedImage(string ImageId)
+        {
+            string fileId = "";
+            string sheetId = "";
+            bool isFound = false;
+
+            foreach (ScanFile file in scanPack.ScanFiles)
+            {
+                foreach (ScanSheet sheet in file.Sheets)
+                {
+                    if (sheet.Top != null && sheet.Top.ImageId == ImageId)
+                    {
+                        sheet.Top = null;
+                        fileId = file.FileId;
+                        sheetId = sheet.SheetId;
+                        isFound = true;
+                        break;
+                    }
+                    if (sheet.Bottom != null && sheet.Bottom.ImageId == ImageId)
+                    {
+                        sheet.Bottom = null;
+                 
+                        fileId = file.FileId;
+                        sheetId = sheet.SheetId;
+                        isFound = true;
+                        break;
+                    }
+                }
+                if (isFound) break;
+            }
+            if (isFound)
+            {
+                foreach (MyTreeNode file in treeView1.Nodes[0].Nodes)
+                {
+                    if ((file.ScanObject as ScanFile).FileId == fileId)
+                    {
+                        foreach (MyTreeNode sheet in file.Nodes)
+                        {
+                            if ((sheet.ScanObject as ScanSheet).SheetId == sheetId)
+                            {
+                                for (int i = 0; i < sheet.Nodes.Count; i++)
+                                {
+                                    MyTreeNode page = (MyTreeNode)sheet.Nodes[i];
+                                    ScanPage scanPage = page.ScanObject as ScanPage;
+                                    if (scanPage != null && scanPage.ImageId == ImageId)
+                                    {
+                                        sheet.Nodes.RemoveAt(i);
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private void CallDeleteImage()
+        {
+            if (MessageBox.Show("Do you want to delete the selected images?", "Confirm delete images", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                if (previewPic != null && previewPic.Image != null)
+                {
+
+                    DeleteSelectedImage((lastselectedNode.ScanObject as ScanPage).ImageId);
+                }
+                else
+                {
+                    for (int i = 0; i < flowLayoutPanel1.Controls.Count; i++)
+                    {
+                        object child = flowLayoutPanel1.Controls[i];
+                        ucThumbnail tmp = (ucThumbnail)child;
+                        if (tmp.IsSelected)
+                        {
+
+                            ScanPage selectedPage = tmp.ScanPage;
+                            DeleteSelectedImage(selectedPage.ImageId);
+                            flowLayoutPanel1.Controls.RemoveAt(i);
+                            i--;
+                        }
+                    }
+
+                }
+            }
+        }
+        private void tsDeleteImage_Click(object sender, EventArgs e)
+        {
+            CallDeleteImage();
         }
     }
 }

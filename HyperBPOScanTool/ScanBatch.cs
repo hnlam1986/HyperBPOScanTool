@@ -23,6 +23,47 @@ namespace HyperBPOScanTool
         {
             ScanFiles = new List<ScanFile>();
         }
+
+        public int GetTotalPageCount()
+        {
+            int count = 0;
+            foreach (var file in ScanFiles)
+            {
+                foreach (var sheet in file.Sheets)
+                {
+                    if (sheet.Top != null) count++;
+                    if (sheet.Bottom != null) count++;
+                }
+            }
+            return count;
+        }
+        public int GetTotalSheetCount()
+        {
+            int count = 0;
+            foreach (var file in ScanFiles)
+            {
+                count += file.Sheets.Count;
+            }
+            return count;
+        }
+        public int GetTotalFileCount()
+        {
+            return ScanFiles.Count;
+        }
+        public int GetTotalPageCountByFile(string fileId)
+        {
+            int count = 0;
+            var file = ScanFiles.FirstOrDefault(f => f.FileId == fileId);
+            if (file != null)
+            {
+                foreach (var sheet in file.Sheets)
+                {
+                    if (sheet.Top != null) count++;
+                    if (sheet.Bottom != null) count++;
+                }
+            }
+            return count;
+        }
         public List<ScanFile> ScanFiles { get; set; }
         public string BatchName { get; set; }
         public string ExportPath { get; set; }

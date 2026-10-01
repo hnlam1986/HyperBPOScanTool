@@ -54,6 +54,9 @@ namespace HyperBPOScanTool.UserControls
             this.ParentForm.Close();
         }
 
-        
+        private void btnAll_Click(object sender, EventArgs e)
+        {
+            txtBottomBorder.Text=txtLeftBorder.Text = txtRightBorder.Text = txtTopBorder.Text;
+        }
     }
 }

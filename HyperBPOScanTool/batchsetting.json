@@ -1,0 +1,19 @@
+[
+  {
+    "BatchId": "639264561645998811",
+    "BatchName": "VNTO_2027_6",
+    "HasCreateSubFolder": true,
+    "SeparateChar": "_",
+    "IndexFormat": "0000",
+    "StartNum": 0,
+    "ExportFolder": "D:\\ExportScanTool",
+    "SeparateType": 3,
+    "SplitPageCount": 2,
+    "BlankSheetThreshold": 0.02,
+    "IsDiscardBlankSheets": false,
+    "WhiteBorderTop": 30,
+    "WhiteBorderRight": 30,
+    "WhiteBorderBottom": 30,
+    "WhiteBorderLeft": 30
+  }
+]

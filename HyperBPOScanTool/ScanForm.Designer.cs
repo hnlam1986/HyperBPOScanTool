@@ -34,6 +34,13 @@
             statusStrip1 = new StatusStrip();
             lblStatusText = new ToolStripStatusLabel();
             tsProgressBar = new ToolStripProgressBar();
+            toolStripStatusLabel1 = new ToolStripStatusLabel();
+            toolStripStatusLabel5 = new ToolStripStatusLabel();
+            tslblTotalFile = new ToolStripStatusLabel();
+            tslblTotalPages = new ToolStripStatusLabel();
+            toolStripStatusLabel7 = new ToolStripStatusLabel();
+            toolStripStatusLabel6 = new ToolStripStatusLabel();
+            tslblSelectedTotalPage = new ToolStripStatusLabel();
             tableLayoutPanel1 = new TableLayoutPanel();
             splitContainer1 = new SplitContainer();
             treeView1 = new TreeView();
@@ -54,7 +61,7 @@
             tsRotateRight = new ToolStripButton();
             tsRotateLeft = new ToolStripButton();
             tsUpDown = new ToolStripButton();
-            tsDeletePage = new ToolStripButton();
+            tsDeleteImage = new ToolStripButton();
             tsWhiteBorder = new ToolStripButton();
             toolStripSeparator2 = new ToolStripSeparator();
             tsStraigth = new ToolStripButton();
@@ -65,12 +72,10 @@
             tsCancel = new ToolStripButton();
             toolStrip2 = new ToolStrip();
             tsNewBatch = new ToolStripButton();
-            txOpenBatch = new ToolStripButton();
-            tsCloseBatch = new ToolStripButton();
             tsClearCurrentScan = new ToolStripButton();
             toolStripSeparator1 = new ToolStripSeparator();
-            tsSeparate = new ToolStripButton();
             btnExportBatch = new ToolStripButton();
+            tsSeparate = new ToolStripButton();
             menuTreview = new ContextMenuStrip(components);
             miIsblank = new ToolStripMenuItem();
             toolStripSeparator3 = new ToolStripSeparator();
@@ -79,15 +84,9 @@
             toolStripSeparator5 = new ToolStripSeparator();
             miInsertScan = new ToolStripMenuItem();
             miRescan = new ToolStripMenuItem();
+            miSwapPage = new ToolStripMenuItem();
             toolStripSeparator4 = new ToolStripSeparator();
             miRename = new ToolStripMenuItem();
-            toolStripStatusLabel1 = new ToolStripStatusLabel();
-            toolStripStatusLabel2 = new ToolStripStatusLabel();
-            toolStripStatusLabel3 = new ToolStripStatusLabel();
-            toolStripStatusLabel4 = new ToolStripStatusLabel();
-            toolStripStatusLabel5 = new ToolStripStatusLabel();
-            toolStripStatusLabel6 = new ToolStripStatusLabel();
-            toolStripStatusLabel7 = new ToolStripStatusLabel();
             statusStrip1.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
@@ -124,7 +123,7 @@
             // 
             statusStrip1.AutoSize = false;
             statusStrip1.Dock = DockStyle.Fill;
-            statusStrip1.Items.AddRange(new ToolStripItem[] { lblStatusText, tsProgressBar, toolStripStatusLabel1, toolStripStatusLabel5, toolStripStatusLabel4, toolStripStatusLabel2, toolStripStatusLabel7, toolStripStatusLabel6, toolStripStatusLabel3 });
+            statusStrip1.Items.AddRange(new ToolStripItem[] { lblStatusText, tsProgressBar, toolStripStatusLabel1, toolStripStatusLabel5, tslblTotalFile, tslblTotalPages, toolStripStatusLabel7, toolStripStatusLabel6, tslblSelectedTotalPage });
             statusStrip1.Location = new Point(0, 1191);
             statusStrip1.Name = "statusStrip1";
             statusStrip1.Size = new Size(1549, 30);
@@ -142,6 +141,49 @@
             tsProgressBar.Alignment = ToolStripItemAlignment.Right;
             tsProgressBar.Name = "tsProgressBar";
             tsProgressBar.Size = new Size(300, 24);
+            // 
+            // toolStripStatusLabel1
+            // 
+            toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            toolStripStatusLabel1.Size = new Size(903, 25);
+            toolStripStatusLabel1.Spring = true;
+            // 
+            // toolStripStatusLabel5
+            // 
+            toolStripStatusLabel5.Name = "toolStripStatusLabel5";
+            toolStripStatusLabel5.Size = new Size(64, 25);
+            toolStripStatusLabel5.Text = "Batch info:";
+            // 
+            // tslblTotalFile
+            // 
+            tslblTotalFile.Name = "tslblTotalFile";
+            tslblTotalFile.Size = new Size(37, 25);
+            tslblTotalFile.Text = "2 files";
+            // 
+            // tslblTotalPages
+            // 
+            tslblTotalPages.Name = "tslblTotalPages";
+            tslblTotalPages.Size = new Size(59, 25);
+            tslblTotalPages.Text = "100 pages";
+            // 
+            // toolStripStatusLabel7
+            // 
+            toolStripStatusLabel7.ForeColor = SystemColors.ControlDark;
+            toolStripStatusLabel7.Name = "toolStripStatusLabel7";
+            toolStripStatusLabel7.Size = new Size(10, 25);
+            toolStripStatusLabel7.Text = "|";
+            // 
+            // toolStripStatusLabel6
+            // 
+            toolStripStatusLabel6.Name = "toolStripStatusLabel6";
+            toolStripStatusLabel6.Size = new Size(73, 25);
+            toolStripStatusLabel6.Text = "Selected file:";
+            // 
+            // tslblSelectedTotalPage
+            // 
+            tslblSelectedTotalPage.Name = "tslblSelectedTotalPage";
+            tslblSelectedTotalPage.Size = new Size(47, 25);
+            tslblSelectedTotalPage.Text = "3 pages";
             // 
             // tableLayoutPanel1
             // 
@@ -313,8 +355,8 @@
             // 
             toolStrip1.AutoSize = false;
             toolStrip1.Dock = DockStyle.None;
-            toolStrip1.Items.AddRange(new ToolStripItem[] { tsRotateRight, tsRotateLeft, tsUpDown, tsDeletePage, tsWhiteBorder, toolStripSeparator2, tsStraigth, tsClearArea, tsRescan, toolStripSeparator6, tsOK, tsCancel });
-            toolStrip1.Location = new Point(317, 1);
+            toolStrip1.Items.AddRange(new ToolStripItem[] { tsRotateRight, tsRotateLeft, tsUpDown, tsDeleteImage, tsWhiteBorder, toolStripSeparator2, tsStraigth, tsClearArea, tsRescan, toolStripSeparator6, tsOK, tsCancel });
+            toolStrip1.Location = new Point(204, 1);
             toolStrip1.Name = "toolStrip1";
             toolStrip1.Size = new Size(472, 37);
             toolStrip1.TabIndex = 8;
@@ -353,16 +395,16 @@
             tsUpDown.Text = "Up/Down";
             tsUpDown.Click += tsUpDown_Click;
             // 
-            // tsDeletePage
+            // tsDeleteImage
             // 
-            tsDeletePage.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            tsDeletePage.Image = Properties.Resources.delete_page;
-            tsDeletePage.ImageScaling = ToolStripItemImageScaling.None;
-            tsDeletePage.ImageTransparentColor = Color.Magenta;
-            tsDeletePage.Name = "tsDeletePage";
-            tsDeletePage.Size = new Size(44, 34);
-            tsDeletePage.Text = "Delete page";
-            tsDeletePage.Click += tsDeletePage_Click;
+            tsDeleteImage.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            tsDeleteImage.Image = Properties.Resources.delete_page;
+            tsDeleteImage.ImageScaling = ToolStripItemImageScaling.None;
+            tsDeleteImage.ImageTransparentColor = Color.Magenta;
+            tsDeleteImage.Name = "tsDeleteImage";
+            tsDeleteImage.Size = new Size(44, 34);
+            tsDeleteImage.Text = "Delete image";
+            tsDeleteImage.Click += tsDeleteImage_Click;
             // 
             // tsWhiteBorder
             // 
@@ -448,44 +490,24 @@
             // 
             toolStrip2.AutoSize = false;
             toolStrip2.Dock = DockStyle.None;
-            toolStrip2.Items.AddRange(new ToolStripItem[] { tsNewBatch, txOpenBatch, tsCloseBatch, tsClearCurrentScan, toolStripSeparator1, tsSeparate, btnExportBatch });
+            toolStrip2.Items.AddRange(new ToolStripItem[] { tsNewBatch, tsClearCurrentScan, toolStripSeparator1, btnExportBatch, tsSeparate });
             toolStrip2.Location = new Point(1, 1);
             toolStrip2.Name = "toolStrip2";
             toolStrip2.Padding = new Padding(0);
-            toolStrip2.Size = new Size(306, 37);
+            toolStrip2.Size = new Size(203, 37);
             toolStrip2.TabIndex = 7;
             toolStrip2.Text = "toolStrip2";
             // 
             // tsNewBatch
             // 
             tsNewBatch.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            tsNewBatch.Image = Properties.Resources.new_batch;
+            tsNewBatch.Image = Properties.Resources.batch;
             tsNewBatch.ImageScaling = ToolStripItemImageScaling.None;
             tsNewBatch.ImageTransparentColor = Color.Magenta;
             tsNewBatch.Name = "tsNewBatch";
-            tsNewBatch.Size = new Size(44, 34);
-            tsNewBatch.Text = "New batch";
+            tsNewBatch.Size = new Size(34, 34);
+            tsNewBatch.Text = "Batch setting";
             tsNewBatch.Click += tsNewBatch_Click;
-            // 
-            // txOpenBatch
-            // 
-            txOpenBatch.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            txOpenBatch.Image = Properties.Resources.open_batch;
-            txOpenBatch.ImageScaling = ToolStripItemImageScaling.None;
-            txOpenBatch.ImageTransparentColor = Color.Magenta;
-            txOpenBatch.Name = "txOpenBatch";
-            txOpenBatch.Size = new Size(44, 34);
-            txOpenBatch.Text = "Open batch";
-            // 
-            // tsCloseBatch
-            // 
-            tsCloseBatch.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            tsCloseBatch.Image = Properties.Resources.close_batch;
-            tsCloseBatch.ImageScaling = ToolStripItemImageScaling.None;
-            tsCloseBatch.ImageTransparentColor = Color.Magenta;
-            tsCloseBatch.Name = "tsCloseBatch";
-            tsCloseBatch.Size = new Size(44, 34);
-            tsCloseBatch.Text = "Close batch";
             // 
             // tsClearCurrentScan
             // 
@@ -503,17 +525,6 @@
             toolStripSeparator1.Name = "toolStripSeparator1";
             toolStripSeparator1.Size = new Size(6, 37);
             // 
-            // tsSeparate
-            // 
-            tsSeparate.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            tsSeparate.Image = Properties.Resources.separate;
-            tsSeparate.ImageScaling = ToolStripItemImageScaling.None;
-            tsSeparate.ImageTransparentColor = Color.Magenta;
-            tsSeparate.Name = "tsSeparate";
-            tsSeparate.Size = new Size(44, 34);
-            tsSeparate.Text = "toolStripButton13";
-            tsSeparate.Click += tsSeparate_Click;
-            // 
             // btnExportBatch
             // 
             btnExportBatch.DisplayStyle = ToolStripItemDisplayStyle.Image;
@@ -525,50 +536,62 @@
             btnExportBatch.Text = "Export";
             btnExportBatch.Click += btnExportBatch_Click;
             // 
+            // tsSeparate
+            // 
+            tsSeparate.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            tsSeparate.Image = Properties.Resources.separate;
+            tsSeparate.ImageScaling = ToolStripItemImageScaling.None;
+            tsSeparate.ImageTransparentColor = Color.Magenta;
+            tsSeparate.Name = "tsSeparate";
+            tsSeparate.Size = new Size(44, 34);
+            tsSeparate.Text = "toolStripButton13";
+            tsSeparate.Visible = false;
+            tsSeparate.Click += tsSeparate_Click;
+            // 
             // menuTreview
             // 
-            menuTreview.Items.AddRange(new ToolStripItem[] { miIsblank, toolStripSeparator3, miAddNew, miDelete, toolStripSeparator5, miInsertScan, miRescan, toolStripSeparator4, miRename });
+            menuTreview.Items.AddRange(new ToolStripItem[] { miIsblank, toolStripSeparator3, miAddNew, miDelete, toolStripSeparator5, miInsertScan, miRescan, miSwapPage, toolStripSeparator4, miRename });
             menuTreview.Name = "contextMenuStrip1";
-            menuTreview.Size = new Size(131, 154);
+            menuTreview.Size = new Size(132, 176);
             // 
             // miIsblank
             // 
             miIsblank.Enabled = false;
             miIsblank.Name = "miIsblank";
-            miIsblank.Size = new Size(130, 22);
+            miIsblank.Size = new Size(131, 22);
             miIsblank.Text = "Is Blank";
             miIsblank.Click += miIsblank_Click;
             // 
             // toolStripSeparator3
             // 
             toolStripSeparator3.Name = "toolStripSeparator3";
-            toolStripSeparator3.Size = new Size(127, 6);
+            toolStripSeparator3.Size = new Size(128, 6);
             // 
             // miAddNew
             // 
             miAddNew.Enabled = false;
             miAddNew.Name = "miAddNew";
-            miAddNew.Size = new Size(130, 22);
+            miAddNew.Size = new Size(131, 22);
             miAddNew.Text = "Add New";
             // 
             // miDelete
             // 
             miDelete.Enabled = false;
             miDelete.Name = "miDelete";
-            miDelete.Size = new Size(130, 22);
+            miDelete.Size = new Size(131, 22);
             miDelete.Text = "Delete";
             miDelete.Click += miDelete_Click;
             // 
             // toolStripSeparator5
             // 
             toolStripSeparator5.Name = "toolStripSeparator5";
-            toolStripSeparator5.Size = new Size(127, 6);
+            toolStripSeparator5.Size = new Size(128, 6);
             // 
             // miInsertScan
             // 
             miInsertScan.Enabled = false;
             miInsertScan.Name = "miInsertScan";
-            miInsertScan.Size = new Size(130, 22);
+            miInsertScan.Size = new Size(131, 22);
             miInsertScan.Text = "Insert scan";
             miInsertScan.Click += miInsertScan_Click;
             // 
@@ -576,65 +599,30 @@
             // 
             miRescan.Enabled = false;
             miRescan.Name = "miRescan";
-            miRescan.Size = new Size(130, 22);
+            miRescan.Size = new Size(131, 22);
             miRescan.Text = "ReScan";
             miRescan.Click += miRescan_Click;
+            // 
+            // miSwapPage
+            // 
+            miSwapPage.Enabled = false;
+            miSwapPage.Name = "miSwapPage";
+            miSwapPage.Size = new Size(131, 22);
+            miSwapPage.Text = "Swap page";
+            miSwapPage.Click += tsSwapPage_Click;
             // 
             // toolStripSeparator4
             // 
             toolStripSeparator4.Name = "toolStripSeparator4";
-            toolStripSeparator4.Size = new Size(127, 6);
+            toolStripSeparator4.Size = new Size(128, 6);
             // 
             // miRename
             // 
             miRename.Enabled = false;
             miRename.Name = "miRename";
-            miRename.Size = new Size(130, 22);
+            miRename.Size = new Size(131, 22);
             miRename.Text = "Rename";
             miRename.Click += miRename_Click;
-            // 
-            // toolStripStatusLabel1
-            // 
-            toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            toolStripStatusLabel1.Size = new Size(735, 25);
-            toolStripStatusLabel1.Spring = true;
-            // 
-            // toolStripStatusLabel2
-            // 
-            toolStripStatusLabel2.Name = "toolStripStatusLabel2";
-            toolStripStatusLabel2.Size = new Size(59, 25);
-            toolStripStatusLabel2.Text = "100 pages";
-            // 
-            // toolStripStatusLabel3
-            // 
-            toolStripStatusLabel3.Name = "toolStripStatusLabel3";
-            toolStripStatusLabel3.Size = new Size(47, 25);
-            toolStripStatusLabel3.Text = "3 pages";
-            // 
-            // toolStripStatusLabel4
-            // 
-            toolStripStatusLabel4.Name = "toolStripStatusLabel4";
-            toolStripStatusLabel4.Size = new Size(37, 25);
-            toolStripStatusLabel4.Text = "2 files";
-            // 
-            // toolStripStatusLabel5
-            // 
-            toolStripStatusLabel5.Name = "toolStripStatusLabel5";
-            toolStripStatusLabel5.Size = new Size(64, 25);
-            toolStripStatusLabel5.Text = "Batch info:";
-            // 
-            // toolStripStatusLabel6
-            // 
-            toolStripStatusLabel6.Name = "toolStripStatusLabel6";
-            toolStripStatusLabel6.Size = new Size(73, 25);
-            toolStripStatusLabel6.Text = "Selected file:";
-            // 
-            // toolStripStatusLabel7
-            // 
-            toolStripStatusLabel7.ForeColor = SystemColors.ControlDark;
-            toolStripStatusLabel7.Name = "toolStripStatusLabel7";
-            toolStripStatusLabel7.Size = new Size(10, 25);
-            toolStripStatusLabel7.Text = "|";
             // 
             // ScanForm
             // 
@@ -688,8 +676,6 @@
 
         private ToolStrip toolStrip2;
         private ToolStripButton tsNewBatch;
-        private ToolStripButton txOpenBatch;
-        private ToolStripButton tsCloseBatch;
         private ToolStripSeparator toolStripSeparator1;
         private ToolStripButton btnExportBatch;
         private ToolStrip toolStrip3;
@@ -704,7 +690,7 @@
         private ToolStripButton tsRotateRight;
         private ToolStripButton tsRotateLeft;
         private ToolStripButton tsUpDown;
-        private ToolStripButton tsDeletePage;
+        private ToolStripButton tsDeleteImage;
         private ToolStripButton tsClearArea;
         private ToolStripButton tsRescan;
         private ToolStripSeparator toolStripSeparator2;
@@ -727,11 +713,12 @@
         private ToolStripButton tsCancel;
         private ToolStripStatusLabel toolStripStatusLabel1;
         private ToolStripStatusLabel toolStripStatusLabel5;
-        private ToolStripStatusLabel toolStripStatusLabel4;
-        private ToolStripStatusLabel toolStripStatusLabel2;
-        private ToolStripStatusLabel toolStripStatusLabel3;
+        private ToolStripStatusLabel tslblTotalFile;
+        private ToolStripStatusLabel tslblTotalPages;
+        private ToolStripStatusLabel tslblSelectedTotalPage;
         private ToolStripStatusLabel toolStripStatusLabel7;
         private ToolStripStatusLabel toolStripStatusLabel6;
+        private ToolStripMenuItem miSwapPage;
     }
 }
 

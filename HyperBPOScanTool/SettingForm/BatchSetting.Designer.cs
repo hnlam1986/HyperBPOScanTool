@@ -31,15 +31,19 @@
             lblExportPath = new Label();
             btnSelectpath = new Button();
             folderBrowserDialog1 = new FolderBrowserDialog();
-            tabControl1 = new TabControl();
-            tabPage1 = new TabPage();
+            tabControlBatchSetting = new TabControl();
+            tabList = new TabPage();
+            lstBatchSetting = new ListBox();
+            tabGeneral = new TabPage();
+            txtSeparateChar = new TextBox();
+            label4 = new Label();
             chkSubfolder = new CheckBox();
             label3 = new Label();
             txtIndexFormat = new TextBox();
             label1 = new Label();
             txtBatchName = new TextBox();
             label2 = new Label();
-            tabPage2 = new TabPage();
+            tabSeparate = new TabPage();
             rdSheet = new RadioButton();
             rdBlankSheet = new RadioButton();
             txtBlankValue = new TextBox();
@@ -47,7 +51,12 @@
             rdTotalPages = new RadioButton();
             txtPages = new TextBox();
             chkBlankSheet = new CheckBox();
-            tabPage3 = new TabPage();
+            tabBlankBorder = new TabPage();
+            label8 = new Label();
+            label7 = new Label();
+            label6 = new Label();
+            label5 = new Label();
+            btnAll = new Button();
             btnRollbackAll = new Button();
             btnRollback = new Button();
             btnApplyAll = new Button();
@@ -58,12 +67,14 @@
             txtLeftBorder = new TextBox();
             txtTopBorder = new TextBox();
             btnOK = new Button();
-            txtSeparateChar = new TextBox();
-            label4 = new Label();
-            tabControl1.SuspendLayout();
-            tabPage1.SuspendLayout();
-            tabPage2.SuspendLayout();
-            tabPage3.SuspendLayout();
+            btnDel = new Button();
+            btnSave = new Button();
+            btnSaveAs = new Button();
+            tabControlBatchSetting.SuspendLayout();
+            tabList.SuspendLayout();
+            tabGeneral.SuspendLayout();
+            tabSeparate.SuspendLayout();
+            tabBlankBorder.SuspendLayout();
             SuspendLayout();
             // 
             // lblExportPath
@@ -85,36 +96,77 @@
             btnSelectpath.UseVisualStyleBackColor = true;
             btnSelectpath.Click += btnSelectpath_Click;
             // 
-            // tabControl1
+            // tabControlBatchSetting
             // 
-            tabControl1.Controls.Add(tabPage1);
-            tabControl1.Controls.Add(tabPage2);
-            tabControl1.Controls.Add(tabPage3);
-            tabControl1.Location = new Point(0, 0);
-            tabControl1.Name = "tabControl1";
-            tabControl1.SelectedIndex = 0;
-            tabControl1.Size = new Size(520, 231);
-            tabControl1.TabIndex = 2;
+            tabControlBatchSetting.Controls.Add(tabList);
+            tabControlBatchSetting.Controls.Add(tabGeneral);
+            tabControlBatchSetting.Controls.Add(tabSeparate);
+            tabControlBatchSetting.Controls.Add(tabBlankBorder);
+            tabControlBatchSetting.Location = new Point(0, 0);
+            tabControlBatchSetting.Name = "tabControlBatchSetting";
+            tabControlBatchSetting.SelectedIndex = 0;
+            tabControlBatchSetting.Size = new Size(520, 231);
+            tabControlBatchSetting.TabIndex = 2;
             // 
-            // tabPage1
+            // tabList
             // 
-            tabPage1.Controls.Add(txtSeparateChar);
-            tabPage1.Controls.Add(label4);
-            tabPage1.Controls.Add(chkSubfolder);
-            tabPage1.Controls.Add(label3);
-            tabPage1.Controls.Add(txtIndexFormat);
-            tabPage1.Controls.Add(label1);
-            tabPage1.Controls.Add(txtBatchName);
-            tabPage1.Controls.Add(label2);
-            tabPage1.Controls.Add(btnSelectpath);
-            tabPage1.Controls.Add(lblExportPath);
-            tabPage1.Location = new Point(4, 24);
-            tabPage1.Name = "tabPage1";
-            tabPage1.Padding = new Padding(3);
-            tabPage1.Size = new Size(512, 203);
-            tabPage1.TabIndex = 0;
-            tabPage1.Text = "General";
-            tabPage1.UseVisualStyleBackColor = true;
+            tabList.Controls.Add(lstBatchSetting);
+            tabList.Location = new Point(4, 24);
+            tabList.Name = "tabList";
+            tabList.Padding = new Padding(3);
+            tabList.Size = new Size(512, 203);
+            tabList.TabIndex = 3;
+            tabList.Text = "List Management";
+            tabList.UseVisualStyleBackColor = true;
+            // 
+            // lstBatchSetting
+            // 
+            lstBatchSetting.DisplayMember = "BatchName";
+            lstBatchSetting.Dock = DockStyle.Fill;
+            lstBatchSetting.FormattingEnabled = true;
+            lstBatchSetting.Location = new Point(3, 3);
+            lstBatchSetting.Name = "lstBatchSetting";
+            lstBatchSetting.Size = new Size(506, 197);
+            lstBatchSetting.TabIndex = 0;
+            lstBatchSetting.ValueMember = "BatchId";
+            lstBatchSetting.Click += lstBatchSetting_SelectedIndexChanged;
+            lstBatchSetting.DoubleClick += lstBatchSetting_DoubleClick;
+            // 
+            // tabGeneral
+            // 
+            tabGeneral.Controls.Add(txtSeparateChar);
+            tabGeneral.Controls.Add(label4);
+            tabGeneral.Controls.Add(chkSubfolder);
+            tabGeneral.Controls.Add(label3);
+            tabGeneral.Controls.Add(txtIndexFormat);
+            tabGeneral.Controls.Add(label1);
+            tabGeneral.Controls.Add(txtBatchName);
+            tabGeneral.Controls.Add(label2);
+            tabGeneral.Controls.Add(btnSelectpath);
+            tabGeneral.Controls.Add(lblExportPath);
+            tabGeneral.Location = new Point(4, 24);
+            tabGeneral.Name = "tabGeneral";
+            tabGeneral.Padding = new Padding(3);
+            tabGeneral.Size = new Size(512, 203);
+            tabGeneral.TabIndex = 0;
+            tabGeneral.Text = "General";
+            tabGeneral.UseVisualStyleBackColor = true;
+            // 
+            // txtSeparateChar
+            // 
+            txtSeparateChar.Location = new Point(97, 70);
+            txtSeparateChar.Name = "txtSeparateChar";
+            txtSeparateChar.Size = new Size(384, 23);
+            txtSeparateChar.TabIndex = 9;
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Location = new Point(10, 73);
+            label4.Name = "label4";
+            label4.Size = new Size(78, 15);
+            label4.TabIndex = 8;
+            label4.Text = "Separate char";
             // 
             // chkSubfolder
             // 
@@ -167,22 +219,22 @@
             label2.TabIndex = 2;
             label2.Text = "Batch Name";
             // 
-            // tabPage2
+            // tabSeparate
             // 
-            tabPage2.Controls.Add(rdSheet);
-            tabPage2.Controls.Add(rdBlankSheet);
-            tabPage2.Controls.Add(txtBlankValue);
-            tabPage2.Controls.Add(chkBlankPage);
-            tabPage2.Controls.Add(rdTotalPages);
-            tabPage2.Controls.Add(txtPages);
-            tabPage2.Controls.Add(chkBlankSheet);
-            tabPage2.Location = new Point(4, 24);
-            tabPage2.Name = "tabPage2";
-            tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(512, 187);
-            tabPage2.TabIndex = 1;
-            tabPage2.Text = "Separate mode";
-            tabPage2.UseVisualStyleBackColor = true;
+            tabSeparate.Controls.Add(rdSheet);
+            tabSeparate.Controls.Add(rdBlankSheet);
+            tabSeparate.Controls.Add(txtBlankValue);
+            tabSeparate.Controls.Add(chkBlankPage);
+            tabSeparate.Controls.Add(rdTotalPages);
+            tabSeparate.Controls.Add(txtPages);
+            tabSeparate.Controls.Add(chkBlankSheet);
+            tabSeparate.Location = new Point(4, 24);
+            tabSeparate.Name = "tabSeparate";
+            tabSeparate.Padding = new Padding(3);
+            tabSeparate.Size = new Size(512, 203);
+            tabSeparate.TabIndex = 1;
+            tabSeparate.Text = "Separate mode";
+            tabSeparate.UseVisualStyleBackColor = true;
             // 
             // rdSheet
             // 
@@ -259,77 +311,128 @@
             chkBlankSheet.Text = "Hide blank sheet";
             chkBlankSheet.UseVisualStyleBackColor = true;
             // 
-            // tabPage3
+            // tabBlankBorder
             // 
-            tabPage3.Controls.Add(btnRollbackAll);
-            tabPage3.Controls.Add(btnRollback);
-            tabPage3.Controls.Add(btnApplyAll);
-            tabPage3.Controls.Add(btnApply);
-            tabPage3.Controls.Add(btnPreviewBorder);
-            tabPage3.Controls.Add(txtBottomBorder);
-            tabPage3.Controls.Add(txtRightBorder);
-            tabPage3.Controls.Add(txtLeftBorder);
-            tabPage3.Controls.Add(txtTopBorder);
-            tabPage3.Location = new Point(4, 24);
-            tabPage3.Name = "tabPage3";
-            tabPage3.Size = new Size(512, 187);
-            tabPage3.TabIndex = 2;
-            tabPage3.Text = "Remove black border";
-            tabPage3.UseVisualStyleBackColor = true;
+            tabBlankBorder.Controls.Add(label8);
+            tabBlankBorder.Controls.Add(label7);
+            tabBlankBorder.Controls.Add(label6);
+            tabBlankBorder.Controls.Add(label5);
+            tabBlankBorder.Controls.Add(btnAll);
+            tabBlankBorder.Controls.Add(btnRollbackAll);
+            tabBlankBorder.Controls.Add(btnRollback);
+            tabBlankBorder.Controls.Add(btnApplyAll);
+            tabBlankBorder.Controls.Add(btnApply);
+            tabBlankBorder.Controls.Add(btnPreviewBorder);
+            tabBlankBorder.Controls.Add(txtBottomBorder);
+            tabBlankBorder.Controls.Add(txtRightBorder);
+            tabBlankBorder.Controls.Add(txtLeftBorder);
+            tabBlankBorder.Controls.Add(txtTopBorder);
+            tabBlankBorder.Location = new Point(4, 24);
+            tabBlankBorder.Name = "tabBlankBorder";
+            tabBlankBorder.Size = new Size(512, 203);
+            tabBlankBorder.TabIndex = 2;
+            tabBlankBorder.Text = "Remove black border";
+            tabBlankBorder.UseVisualStyleBackColor = true;
+            // 
+            // label8
+            // 
+            label8.AutoSize = true;
+            label8.Location = new Point(71, 120);
+            label8.Name = "label8";
+            label8.Size = new Size(47, 15);
+            label8.TabIndex = 29;
+            label8.Text = "Bottom";
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Location = new Point(146, 67);
+            label7.Name = "label7";
+            label7.Size = new Size(35, 15);
+            label7.TabIndex = 28;
+            label7.Text = "Right";
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Location = new Point(4, 67);
+            label6.Name = "label6";
+            label6.Size = new Size(27, 15);
+            label6.TabIndex = 27;
+            label6.Text = "Left";
+            // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Location = new Point(79, 16);
+            label5.Name = "label5";
+            label5.Size = new Size(27, 15);
+            label5.TabIndex = 26;
+            label5.Text = "Top";
+            // 
+            // btnAll
+            // 
+            btnAll.Location = new Point(146, 35);
+            btnAll.Name = "btnAll";
+            btnAll.Size = new Size(29, 23);
+            btnAll.TabIndex = 25;
+            btnAll.Text = "All";
+            btnAll.UseVisualStyleBackColor = true;
+            btnAll.Click += btnAll_Click;
             // 
             // btnRollbackAll
             // 
-            btnRollbackAll.Location = new Point(187, 73);
+            btnRollbackAll.Location = new Point(288, 91);
             btnRollbackAll.Margin = new Padding(4, 3, 4, 3);
             btnRollbackAll.Name = "btnRollbackAll";
-            btnRollbackAll.Size = new Size(47, 28);
+            btnRollbackAll.Size = new Size(79, 28);
             btnRollbackAll.TabIndex = 24;
-            btnRollbackAll.Text = "RbA";
+            btnRollbackAll.Text = "Rollback all";
             btnRollbackAll.UseVisualStyleBackColor = true;
             // 
             // btnRollback
             // 
-            btnRollback.Location = new Point(187, 43);
+            btnRollback.Location = new Point(288, 60);
             btnRollback.Margin = new Padding(4, 3, 4, 3);
             btnRollback.Name = "btnRollback";
-            btnRollback.Size = new Size(47, 28);
+            btnRollback.Size = new Size(79, 28);
             btnRollback.TabIndex = 23;
-            btnRollback.Text = "Rb";
+            btnRollback.Text = "Rollback";
             btnRollback.UseVisualStyleBackColor = true;
             // 
             // btnApplyAll
             // 
-            btnApplyAll.Location = new Point(119, 73);
+            btnApplyAll.Location = new Point(206, 91);
             btnApplyAll.Margin = new Padding(4, 3, 4, 3);
             btnApplyAll.Name = "btnApplyAll";
-            btnApplyAll.Size = new Size(63, 28);
+            btnApplyAll.Size = new Size(79, 28);
             btnApplyAll.TabIndex = 22;
             btnApplyAll.Text = "Apply all";
             btnApplyAll.UseVisualStyleBackColor = true;
             // 
             // btnApply
             // 
-            btnApply.Location = new Point(119, 43);
+            btnApply.Location = new Point(206, 60);
             btnApply.Margin = new Padding(4, 3, 4, 3);
             btnApply.Name = "btnApply";
-            btnApply.Size = new Size(63, 28);
+            btnApply.Size = new Size(79, 28);
             btnApply.TabIndex = 21;
             btnApply.Text = "Apply";
             btnApply.UseVisualStyleBackColor = true;
             // 
             // btnPreviewBorder
             // 
-            btnPreviewBorder.Location = new Point(119, 13);
+            btnPreviewBorder.Location = new Point(206, 29);
             btnPreviewBorder.Margin = new Padding(4, 3, 4, 3);
             btnPreviewBorder.Name = "btnPreviewBorder";
-            btnPreviewBorder.Size = new Size(114, 28);
+            btnPreviewBorder.Size = new Size(161, 28);
             btnPreviewBorder.TabIndex = 20;
             btnPreviewBorder.Text = "Preview";
             btnPreviewBorder.UseVisualStyleBackColor = true;
             // 
             // txtBottomBorder
             // 
-            txtBottomBorder.Location = new Point(9, 77);
+            txtBottomBorder.Location = new Point(37, 94);
             txtBottomBorder.Margin = new Padding(4, 3, 4, 3);
             txtBottomBorder.Name = "txtBottomBorder";
             txtBottomBorder.Size = new Size(102, 23);
@@ -338,7 +441,7 @@
             // 
             // txtRightBorder
             // 
-            txtRightBorder.Location = new Point(64, 47);
+            txtRightBorder.Location = new Point(92, 64);
             txtRightBorder.Margin = new Padding(4, 3, 4, 3);
             txtRightBorder.Name = "txtRightBorder";
             txtRightBorder.Size = new Size(47, 23);
@@ -347,7 +450,7 @@
             // 
             // txtLeftBorder
             // 
-            txtLeftBorder.Location = new Point(10, 47);
+            txtLeftBorder.Location = new Point(38, 64);
             txtLeftBorder.Margin = new Padding(4, 3, 4, 3);
             txtLeftBorder.Name = "txtLeftBorder";
             txtLeftBorder.Size = new Size(47, 23);
@@ -356,7 +459,7 @@
             // 
             // txtTopBorder
             // 
-            txtTopBorder.Location = new Point(9, 17);
+            txtTopBorder.Location = new Point(37, 34);
             txtTopBorder.Margin = new Padding(4, 3, 4, 3);
             txtTopBorder.Name = "txtTopBorder";
             txtTopBorder.Size = new Size(102, 23);
@@ -373,39 +476,57 @@
             btnOK.UseVisualStyleBackColor = true;
             btnOK.Click += btnOK_Click;
             // 
-            // txtSeparateChar
+            // btnDel
             // 
-            txtSeparateChar.Location = new Point(97, 70);
-            txtSeparateChar.Name = "txtSeparateChar";
-            txtSeparateChar.Size = new Size(384, 23);
-            txtSeparateChar.TabIndex = 9;
+            btnDel.Location = new Point(5, 245);
+            btnDel.Name = "btnDel";
+            btnDel.Size = new Size(50, 27);
+            btnDel.TabIndex = 5;
+            btnDel.Text = "Delete";
+            btnDel.UseVisualStyleBackColor = true;
+            btnDel.Click += btnDel_Click;
             // 
-            // label4
+            // btnSave
             // 
-            label4.AutoSize = true;
-            label4.Location = new Point(10, 73);
-            label4.Name = "label4";
-            label4.Size = new Size(78, 15);
-            label4.TabIndex = 8;
-            label4.Text = "Separate char";
+            btnSave.Location = new Point(61, 245);
+            btnSave.Name = "btnSave";
+            btnSave.Size = new Size(56, 27);
+            btnSave.TabIndex = 6;
+            btnSave.Text = "Save";
+            btnSave.UseVisualStyleBackColor = true;
+            btnSave.Click += btnSave_Click;
+            // 
+            // btnSaveAs
+            // 
+            btnSaveAs.Location = new Point(123, 245);
+            btnSaveAs.Name = "btnSaveAs";
+            btnSaveAs.Size = new Size(56, 27);
+            btnSaveAs.TabIndex = 7;
+            btnSaveAs.Text = "Save As";
+            btnSaveAs.UseVisualStyleBackColor = true;
+            btnSaveAs.Click += btnSaveAs_Click;
             // 
             // BatchSetting
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(521, 284);
+            Controls.Add(btnSaveAs);
+            Controls.Add(btnSave);
+            Controls.Add(btnDel);
             Controls.Add(btnOK);
-            Controls.Add(tabControl1);
+            Controls.Add(tabControlBatchSetting);
             Name = "BatchSetting";
             Text = "Batch Setting";
             Load += BatchSetting_Load;
-            tabControl1.ResumeLayout(false);
-            tabPage1.ResumeLayout(false);
-            tabPage1.PerformLayout();
-            tabPage2.ResumeLayout(false);
-            tabPage2.PerformLayout();
-            tabPage3.ResumeLayout(false);
-            tabPage3.PerformLayout();
+            tabControlBatchSetting.ResumeLayout(false);
+            tabList.ResumeLayout(false);
+            tabGeneral.ResumeLayout(false);
+            tabGeneral.PerformLayout();
+            tabSeparate.ResumeLayout(false);
+            tabSeparate.PerformLayout();
+            tabBlankBorder.ResumeLayout(false);
+            tabBlankBorder.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -414,10 +535,10 @@
         private Label lblExportPath;
         private Button btnSelectpath;
         private FolderBrowserDialog folderBrowserDialog1;
-        private TabControl tabControl1;
-        private TabPage tabPage1;
-        private TabPage tabPage2;
-        private TabPage tabPage3;
+        private TabControl tabControlBatchSetting;
+        private TabPage tabGeneral;
+        private TabPage tabSeparate;
+        private TabPage tabBlankBorder;
         private RadioButton rdSheet;
         private RadioButton rdBlankSheet;
         private TextBox txtBlankValue;
@@ -443,5 +564,15 @@
         private CheckBox chkSubfolder;
         private TextBox txtSeparateChar;
         private Label label4;
+        private TabPage tabList;
+        private ListBox lstBatchSetting;
+        private Button btnAll;
+        private Label label8;
+        private Label label7;
+        private Label label6;
+        private Label label5;
+        private Button btnDel;
+        private Button btnSave;
+        private Button btnSaveAs;
     }
 }

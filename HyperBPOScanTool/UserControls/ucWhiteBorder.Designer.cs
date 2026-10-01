@@ -41,6 +41,7 @@
             label2 = new Label();
             label3 = new Label();
             label4 = new Label();
+            btnAll = new Button();
             SuspendLayout();
             // 
             // btnRollbackAll
@@ -172,10 +173,21 @@
             label4.TabIndex = 28;
             label4.Text = "Bottom";
             // 
+            // btnAll
+            // 
+            btnAll.Location = new Point(147, 22);
+            btnAll.Name = "btnAll";
+            btnAll.Size = new Size(31, 23);
+            btnAll.TabIndex = 29;
+            btnAll.Text = "All";
+            btnAll.UseVisualStyleBackColor = true;
+            btnAll.Click += btnAll_Click;
+            // 
             // ucWhiteBorder
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
+            Controls.Add(btnAll);
             Controls.Add(label4);
             Controls.Add(label3);
             Controls.Add(label2);
@@ -210,5 +222,6 @@
         private Label label2;
         private Label label3;
         private Label label4;
+        private Button btnAll;
     }
 }
